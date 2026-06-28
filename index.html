@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vela — Set your thinking in motion</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  .font-lora{font-family:'Lora',serif}
+  .bg-ocean{background-color:#0A1628}
+  .text-ocean{color:#0A1628}
+  .text-sail{color:#63B3ED}
+  .bg-sail{background-color:#63B3ED}
+  .border-sail{border-color:#63B3ED}
+  .skill-bar{transition:width 1.2s ease-out}
+  .fade-in{animation:fadeIn .35s ease-out}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  .wind-pulse{animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  textarea:focus,input:focus,select:focus{outline:none}
+  .role-card{cursor:pointer;transition:all .2s}
+  .role-card:hover{transform:translateY(-2px)}
+  .role-card.selected{border-color:#63B3ED;background:rgba(99,179,237,.08)}
+  .tab-active{background:#0A1628!important;color:#fff!important;border-color:#0A1628!important}
+  .mode-pill{cursor:pointer;transition:all .15s}
+  .mode-pill.active{background:#0A1628;color:#fff}
+  .review-card{border-left:3px solid #63B3ED}
+  .journal-entry{transition:all .15s}
+  .journal-entry:hover{background:var(--surface-hover,#f9f8f5)}
+  .guardian-badge{background:linear-gradient(135deg,#0A1628,#1a3a5c)}
+  .expert-badge{background:linear-gradient(135deg,#3C3489,#5a51c7)}
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px}
+</style>
+</head>
+<body class="bg-gray-50 font-sans min-h-screen" style="font-family:'Inter',sans-serif">
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: ROLE SELECTOR (entry point)
+══════════════════════════════════════════════ -->
+<div id="screen-role" class="min-h-screen flex flex-col items-center justify-center px-4 py-12">
+  <div class="font-lora text-4xl font-semibold text-ocean mb-1">Ve<span class="text-sail">la</span></div>
+  <p class="text-sm text-gray-400 mb-10">Set your thinking in motion.</p>
+
+  <div class="w-full max-w-lg">
+    <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4 text-center">Who are you today?</p>
+    <div class="grid grid-cols-1 gap-3">
+
+      <div class="role-card border border-black/8 rounded-2xl p-4 bg-white flex items-center gap-4" onclick="enterAs('learner')">
+        <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-2xl flex-shrink-0">🧭</div>
+        <div>
+          <div class="font-semibold text-ocean">Learner</div>
+          <div class="text-xs text-gray-400 mt-0.5">Write, speak, draw or rapid-fire your thoughts. Build your second brain.</div>
+        </div>
+        <div class="ml-auto text-gray-300">→</div>
+      </div>
+
+      <div class="role-card border border-black/8 rounded-2xl p-4 bg-white flex items-center gap-4" onclick="enterAs('guardian')">
+        <div class="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-2xl flex-shrink-0">🛡</div>
+        <div>
+          <div class="font-semibold text-ocean">Guardian</div>
+          <div class="text-xs text-gray-400 mt-0.5">Parent or teacher — review entries, respond personally, or pass to Wind.</div>
+        </div>
+        <div class="ml-auto text-gray-300">→</div>
+      </div>
+
+      <div class="role-card border border-black/8 rounded-2xl p-4 bg-white flex items-center gap-4" onclick="enterAs('instructor')">
+        <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-2xl flex-shrink-0">📚</div>
+        <div>
+          <div class="font-semibold text-ocean">Instructor / Teacher</div>
+          <div class="text-xs text-gray-400 mt-0.5">Set frameworks, publish prompts, craft the learner's journey.</div>
+        </div>
+        <div class="ml-auto text-gray-300">→</div>
+      </div>
+
+      <div class="role-card border border-black/8 rounded-2xl p-4 bg-white flex items-center gap-4" onclick="enterAs('expert-writer')">
+        <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-2xl flex-shrink-0">✍️</div>
+        <div>
+          <div class="font-semibold text-ocean">Writing Expert</div>
+          <div class="text-xs text-gray-400 mt-0.5">Review writing entries, give craft feedback, publish prompt packs.</div>
+        </div>
+        <div class="ml-auto text-gray-300">→</div>
+      </div>
+
+      <div class="role-card border border-black/8 rounded-2xl p-4 bg-white flex items-center gap-4" onclick="enterAs('expert-speaker')">
+        <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-2xl flex-shrink-0">🎙</div>
+        <div>
+          <div class="font-semibold text-ocean">Speaking Expert</div>
+          <div class="text-xs text-gray-400 mt-0.5">Review voice entries, coach rhetoric and delivery, set speaking challenges.</div>
+        </div>
+        <div class="ml-auto text-gray-300">→</div>
+      </div>
+
+    </div>
+    <p class="text-xs text-gray-300 text-center mt-6">vela.myaltx.com · An Altx venture</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: LEARNER
+══════════════════════════════════════════════ -->
+<div id="screen-learner" class="hidden min-h-screen">
+
+  <!-- NAV -->
+  <nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-white/92 backdrop-blur-md border-b border-black/5">
+    <button onclick="showScreen('role')" class="font-lora text-lg font-semibold text-ocean">Ve<span class="text-sail">la</span></button>
+    <div class="flex items-center gap-2">
+      <button onclick="showPanel('second-brain')" class="text-xs px-3 py-1.5 rounded-full border border-black/10 text-gray-500 hover:border-black/30 transition-colors">🧠 Second Brain</button>
+      <button onclick="showPanel('learner-settings')" class="text-xs px-3 py-1.5 rounded-full border border-black/10 text-gray-500 hover:border-black/30 transition-colors">⚙ Settings</button>
+    </div>
+  </nav>
+
+  <div class="max-w-xl mx-auto px-4 pt-20 pb-10">
+
+    <!-- greeting -->
+    <div class="mb-5">
+      <p class="text-xs font-semibold text-sail uppercase tracking-wider mb-0.5" id="learner-greeting">Good morning, Captain ⛵</p>
+      <h2 class="font-lora text-2xl font-semibold text-ocean">Your Log is open.</h2>
+      <p class="text-xs text-gray-400 mt-1" id="learner-streak">Start your first entry today.</p>
+    </div>
+
+    <!-- wake / skill bars -->
+    <div class="bg-ocean rounded-2xl p-4 mb-5">
+      <div class="flex justify-between items-center mb-3">
+        <p class="text-xs text-white/40 uppercase tracking-wider">Your Wake — 6 skills</p>
+        <button onclick="showPanel('second-brain')" class="text-xs text-sail/60 hover:text-sail">Full brain →</button>
+      </div>
+      <div class="space-y-2" id="skill-bars-learner"></div>
+    </div>
+
+    <!-- compass -->
+    <div class="bg-white border border-black/6 rounded-xl p-4 mb-4 flex items-start gap-3">
+      <div class="text-xl">🧭</div>
+      <div class="flex-1">
+        <div class="text-xs font-semibold text-sail uppercase tracking-wider mb-1">Today's Compass</div>
+        <div class="text-sm text-gray-700 font-medium leading-snug" id="compass-display">What do you believe that almost nobody else believes?</div>
+      </div>
+    </div>
+
+    <!-- mode tabs -->
+    <div class="flex gap-2 mb-3 overflow-x-auto pb-1">
+      <button onclick="setLearnerMode('quill')" id="ltab-quill" class="mode-tab tab-active flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap border border-transparent">✍️ Quill</button>
+      <button onclick="setLearnerMode('tide')" id="ltab-tide" class="mode-tab flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap border border-black/10 bg-white text-gray-500">🎙 Tide</button>
+      <button onclick="setLearnerMode('chart')" id="ltab-chart" class="mode-tab flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap border border-black/10 bg-white text-gray-500">🖌 Chart</button>
+      <button onclick="setLearnerMode('gust')" id="ltab-gust" class="mode-tab flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap border border-black/10 bg-white text-gray-500">⚡ Gust</button>
+    </div>
+
+    <!-- QUILL -->
+    <div id="lmode-quill" class="lmode-panel">
+      <div class="bg-white border border-black/6 rounded-xl overflow-hidden mb-3">
+        <textarea id="quill-text" placeholder="Just start. What's in your head right now? Any thought. Any language." class="w-full p-4 text-base text-gray-800 leading-relaxed resize-none outline-none min-h-36 font-lora" oninput="countW(this,'quill-wc');autoH(this)"></textarea>
+        <div class="px-4 py-2.5 border-t border-black/5 flex justify-between items-center">
+          <span class="text-xs text-gray-300" id="quill-wc">0 words</span>
+          <button onclick="submitEntry('quill')" class="bg-ocean text-white text-xs font-semibold px-4 py-1.5 rounded-full hover:opacity-80 transition-opacity">Submit thought →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIDE -->
+    <div id="lmode-tide" class="lmode-panel hidden">
+      <div class="bg-white border border-black/6 rounded-xl p-5 text-center mb-3">
+        <button id="voice-btn" onclick="toggleVoice()" class="w-14 h-14 rounded-full bg-ocean text-2xl flex items-center justify-center mx-auto mb-3 hover:opacity-80 transition-opacity">🎙</button>
+        <p class="text-xs text-gray-400" id="voice-status">Tap to speak. Tide is listening.</p>
+        <textarea id="tide-text" class="w-full mt-3 p-3 text-sm text-gray-700 bg-gray-50 border border-black/5 rounded-lg resize-none outline-none min-h-20 font-lora" placeholder="Your words appear here..."></textarea>
+        <button onclick="submitEntry('tide')" class="mt-3 bg-ocean text-white text-xs font-semibold px-4 py-1.5 rounded-full hover:opacity-80">Submit thought →</button>
+      </div>
+    </div>
+
+    <!-- CHART -->
+    <div id="lmode-chart" class="lmode-panel hidden">
+      <div class="bg-white border border-black/6 rounded-xl overflow-hidden mb-3">
+        <div class="px-4 py-2.5 border-b border-black/5 flex gap-2.5 items-center">
+          <span class="text-xs text-gray-400">Pen:</span>
+          <div class="flex gap-2" id="pen-dots">
+            <div onclick="setPen('#0A1628',this)" class="w-5 h-5 rounded-full cursor-pointer ring-2 ring-ocean ring-offset-1" style="background:#0A1628"></div>
+            <div onclick="setPen('#63B3ED',this)" class="w-5 h-5 rounded-full cursor-pointer" style="background:#63B3ED"></div>
+            <div onclick="setPen('#993C1D',this)" class="w-5 h-5 rounded-full cursor-pointer" style="background:#993C1D"></div>
+            <div onclick="setPen('#0F6E56',this)" class="w-5 h-5 rounded-full cursor-pointer" style="background:#0F6E56"></div>
+          </div>
+          <select onchange="penSize=parseInt(this.value)" class="ml-auto text-xs text-gray-500 border border-black/10 rounded px-1 py-0.5 bg-white">
+            <option value="2">Thin</option><option value="4" selected>Medium</option><option value="8">Thick</option>
+          </select>
+          <button onclick="clearCanvas()" class="text-xs text-gray-400 hover:text-gray-600">Clear</button>
+        </div>
+        <canvas id="draw-canvas" class="w-full block cursor-crosshair" height="180" style="touch-action:none;background:#fafaf8"></canvas>
+        <input id="chart-caption" type="text" placeholder="Describe your drawing in one sentence..." class="w-full p-3 text-sm border-t border-black/5 outline-none text-gray-700 bg-white">
+        <div class="px-4 py-2.5 border-t border-black/5 text-right">
+          <button onclick="submitEntry('chart')" class="bg-ocean text-white text-xs font-semibold px-4 py-1.5 rounded-full hover:opacity-80">Submit thought →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GUST -->
+    <div id="lmode-gust" class="lmode-panel hidden">
+      <div class="bg-white border border-black/6 rounded-xl p-4 mb-3">
+        <p class="text-xs text-gray-400 mb-3">Answer fast — first thought wins.</p>
+        <div class="space-y-3" id="gust-questions"></div>
+        <button onclick="submitEntry('gust')" class="mt-4 w-full bg-ocean text-white text-sm font-semibold py-2.5 rounded-lg hover:opacity-80">Submit Gust →</button>
+      </div>
+    </div>
+
+    <!-- RESPONSE BOX -->
+    <div id="response-box" class="hidden fade-in"></div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: GUARDIAN
+══════════════════════════════════════════════ -->
+<div id="screen-guardian" class="hidden min-h-screen">
+  <nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-white/92 backdrop-blur-md border-b border-black/5">
+    <button onclick="showScreen('role')" class="font-lora text-lg font-semibold text-ocean">Ve<span class="text-sail">la</span> <span class="text-xs font-normal text-gray-400 ml-1">Guardian</span></button>
+    <div class="flex items-center gap-2">
+      <span class="text-xs text-green-600 font-medium bg-green-50 px-2 py-1 rounded-full">🛡 Guardian mode</span>
+    </div>
+  </nav>
+  <div class="max-w-xl mx-auto px-4 pt-20 pb-10">
+    <div class="mb-5">
+      <h2 class="font-lora text-2xl font-semibold text-ocean mb-1">Guardian Review</h2>
+      <p class="text-sm text-gray-400">Review your learner's entries. Respond personally or pass to Wind.</p>
+    </div>
+
+    <!-- pending entries -->
+    <div class="mb-4">
+      <div class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Pending review</div>
+      <div id="guardian-pending"></div>
+    </div>
+
+    <!-- reviewed -->
+    <div>
+      <div class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Reviewed</div>
+      <div id="guardian-reviewed"></div>
+    </div>
+
+    <!-- guardian settings -->
+    <div class="mt-8 bg-white border border-black/6 rounded-xl p-4">
+      <div class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Guardian settings</div>
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs text-gray-500 block mb-1">Your name (shown to learner)</label>
+          <input id="guardian-name" type="text" placeholder="e.g. Dad, Ms. Sarah" class="w-full text-sm border border-black/10 rounded-lg px-3 py-2 outline-none focus:border-sail bg-gray-50">
+        </div>
+        <div>
+          <label class="text-xs text-gray-500 block mb-1">Claude API key (for when you approve Wind)</label>
+          <input id="guardian-api-key" type="password" placeholder="sk-ant-..." class="w-full text-sm border border-black/10 rounded-lg px-3 py-2 outline-none font-mono bg-gray-50">
+        </div>
+        <div>
+          <label class="text-xs text-gray-500 block mb-1">Default action for new entries</label>
+          <select id="guardian-default" class="w-full text-sm border border-black/10 rounded-lg px-3 py-2 outline-none bg-gray-50">
+            <option value="review">Always review first (recommended)</option>
+            <option value="auto-wind">Auto-pass to Wind</option>
+            <option value="manual-only">Manual responses only (no AI)</option>
+          </select>
+        </div>
+        <button onclick="saveGuardianSettings()" class="w-full bg-ocean text-white text-sm font-semibold py-2.5 rounded-lg hover:opacity-80">Save settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: INSTRUCTOR
+══════════════════════════════════════════════ -->
+<div id="screen-instructor" class="hidden min-h-screen">
+  <nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-white/92 backdrop-blur-md border-b border-black/5">
+    <button onclick="showScreen('role')" class="font-lora text-lg font-semibold text-ocean">Ve<span class="text-sail">la</span> <span class="text-xs font-normal text-gray-400 ml-1">Instructor</span></button>
+    <span class="text-xs text-purple-600 font-medium bg-purple-50 px-2 py-1 rounded-full">📚 Instructor mode</span>
+  </nav>
+  <div class="max-w-xl mx-auto px-4 pt-20 pb-10">
+    <div class="mb-5">
+      <h2 class="font-lora text-2xl font-semibold text-ocean mb-1">Craft the journey</h2>
+      <p class="text-sm text-gray-400">Set frameworks, Compass prompts, and Gust question packs.</p>
+    </div>
+
+    <!-- compass editor -->
+    <div class="bg-white border border-black/6 rounded-xl p-4 mb-4">
+      <div class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">🧭 Set today's Compass</div>
+      <textarea id="instructor-compass" rows="2" placeholder="What question should learners think about today?" class="w-full text-sm border border-black/10 rounded-lg px-3 py-2.5 outline-none resize-none bg-gray-50 mb-2"></textarea>
+      <button onclick="setCompass()" class="bg-ocean text-white text-xs font-semibold px-4 py-1.5 rounded-full hover:opacity-80">Set Compass for all learners</button>
+    </div>
+
+    <!-- gust pack editor -->
+    <div class="bg-white border border-black/6 rounded-xl p-4 mb-4">
+      <div class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">⚡ Gust question pack</div>
+      <div id="gust-editor" class="space-y-2 mb-3"></div>
+      <button onclick="addGustQ()" class="text-xs text-sail border border-sail/30 px-3 py-1.5 rounded-full hover:bg-sail/5 mb-3">+ Add question</button>
+      <button onclick="saveGustPack()" class="w-full bg-ocean text-white text-sm font-semibold py-2.5 rounded-lg hover:opacity-80">Save Gust pack</button>
+    </div>
+
+    <!-- framework editor -->
+    <div class="bg-white border border-black/6 rounded-xl p-4 mb-4">
+      <div class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">🎓 Wind framework</div>
+      <div class="flex flex-wrap gap-2 mb-3" id="framework-selector">
+        <div class="framework-pill mode-pill active text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selFramework(this,'Oxford Tutorial')">Oxford Tutorial</div>
+        <div class="framework-pill mode-pill text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selFramework(this,'Harvard Case')">Harvard Case</div>
+        <div class="framework-pill mode-pill text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selFramework(this,'MIT Problem Set')">MIT Problem Set</div>
+        <div class="framework-pill mode-pill text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selFramework(this,'Stanford d.school')">Stanford d.school</div>
+        <div class="framework-pill mode-pill text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selFramework(this,'Socratic')">Socratic</div>
+      </div>
+      <div>
+        <label class="text-xs text-gray-500 block mb-1">Custom Wind instructions for your learners</label>
+        <textarea id="instructor-wind" rows="3" placeholder="e.g. Always end with a reading recommendation. Focus on IGCSE essay structure for this class." class="w-full text-sm border border-black/10 rounded-lg px-3 py-2.5 outline-none resize-none bg-gray-50"></textarea>
+      </div>
+      <button onclick="saveInstructorSettings()" class="mt-3 w-full bg-ocean text-white text-sm font-semibold py-2.5 rounded-lg hover:opacity-80">Save framework settings</button>
+    </div>
+
+    <!-- entries review -->
+    <div class="bg-white border border-black/6 rounded-xl p-4">
+      <div class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">📋 All learner entries</div>
+      <div id="instructor-entries"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: EXPERT (Writer / Speaker)
+══════════════════════════════════════════════ -->
+<div id="screen-expert" class="hidden min-h-screen">
+  <nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-white/92 backdrop-blur-md border-b border-black/5">
+    <button onclick="showScreen('role')" class="font-lora text-lg font-semibold text-ocean">Ve<span class="text-sail">la</span> <span class="text-xs font-normal text-gray-400 ml-1" id="expert-role-label">Expert</span></button>
+    <span class="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded-full" id="expert-badge-label">✍️ Writing Expert</span>
+  </nav>
+  <div class="max-w-xl mx-auto px-4 pt-20 pb-10">
+    <div class="mb-5">
+      <h2 class="font-lora text-2xl font-semibold text-ocean mb-1" id="expert-title">Writing Expert</h2>
+      <p class="text-sm text-gray-400" id="expert-sub">Review writing entries, give craft feedback, publish prompt packs.</p>
+    </div>
+
+    <!-- entries to review -->
+    <div class="mb-4">
+      <div class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Entries awaiting expert feedback</div>
+      <div id="expert-entries"></div>
+    </div>
+
+    <!-- publish prompt pack -->
+    <div class="bg-white border border-black/6 rounded-xl p-4">
+      <div class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">📦 Publish a prompt pack</div>
+      <input type="text" id="pack-name" placeholder="Pack name e.g. 'Persuasive writing starters'" class="w-full text-sm border border-black/10 rounded-lg px-3 py-2 outline-none bg-gray-50 mb-2">
+      <div id="pack-prompts" class="space-y-2 mb-2"></div>
+      <button onclick="addPackPrompt()" class="text-xs text-sail border border-sail/30 px-3 py-1.5 rounded-full hover:bg-sail/5 mb-3">+ Add prompt</button>
+      <button onclick="publishPack()" class="w-full bg-ocean text-white text-sm font-semibold py-2.5 rounded-lg hover:opacity-80">Publish pack</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PANEL: SECOND BRAIN
+══════════════════════════════════════════════ -->
+<div id="panel-second-brain" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center px-3 pb-3">
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closePanel('second-brain')"></div>
+  <div class="relative bg-white rounded-2xl w-full max-w-lg max-h-screen overflow-hidden shadow-2xl fade-in flex flex-col">
+    <div class="bg-ocean px-5 py-4 flex justify-between items-center flex-shrink-0">
+      <div>
+        <div class="font-semibold text-white text-lg">🧠 Your Second Brain</div>
+        <div class="text-xs text-white/40 mt-0.5">Every thought you've ever captured in Vela</div>
+      </div>
+      <button onclick="closePanel('second-brain')" class="text-white/40 hover:text-white text-2xl leading-none">×</button>
+    </div>
+
+    <!-- skill summary -->
+    <div class="px-5 py-4 border-b border-black/5 flex-shrink-0">
+      <div class="grid grid-cols-3 gap-2" id="brain-skill-summary"></div>
+    </div>
+
+    <!-- search -->
+    <div class="px-5 py-3 border-b border-black/5 flex-shrink-0">
+      <input type="text" id="brain-search" placeholder="Search your thoughts..." class="w-full text-sm border border-black/10 rounded-lg px-3 py-2 outline-none bg-gray-50" oninput="filterBrain(this.value)">
+    </div>
+
+    <!-- filter tabs -->
+    <div class="flex gap-2 px-5 py-2 border-b border-black/5 overflow-x-auto flex-shrink-0">
+      <button onclick="filterBrainMode('all')" class="brain-filter text-xs px-3 py-1 rounded-full bg-ocean text-white whitespace-nowrap">All</button>
+      <button onclick="filterBrainMode('quill')" class="brain-filter text-xs px-3 py-1 rounded-full border border-black/10 text-gray-500 whitespace-nowrap">✍️ Quill</button>
+      <button onclick="filterBrainMode('tide')" class="brain-filter text-xs px-3 py-1 rounded-full border border-black/10 text-gray-500 whitespace-nowrap">🎙 Tide</button>
+      <button onclick="filterBrainMode('chart')" class="brain-filter text-xs px-3 py-1 rounded-full border border-black/10 text-gray-500 whitespace-nowrap">🖌 Chart</button>
+      <button onclick="filterBrainMode('gust')" class="brain-filter text-xs px-3 py-1 rounded-full border border-black/10 text-gray-500 whitespace-nowrap">⚡ Gust</button>
+    </div>
+
+    <!-- entries list -->
+    <div class="overflow-y-auto flex-1 px-5 py-3" id="brain-entries-list">
+      <p class="text-sm text-gray-400 text-center py-8">No entries yet. Open your Log and start thinking.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PANEL: LEARNER SETTINGS
+══════════════════════════════════════════════ -->
+<div id="panel-learner-settings" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center px-3 pb-3">
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closePanel('learner-settings')"></div>
+  <div class="relative bg-white rounded-2xl w-full max-w-lg max-h-screen overflow-y-auto shadow-2xl fade-in">
+    <div class="sticky top-0 bg-white border-b border-black/5 px-5 py-4 flex justify-between items-center rounded-t-2xl">
+      <div class="font-semibold text-ocean">⚙ Settings</div>
+      <button onclick="closePanel('learner-settings')" class="text-gray-400 hover:text-gray-600 text-xl">×</button>
+    </div>
+    <div class="p-5 space-y-5">
+      <div>
+        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Your name</div>
+        <input id="learner-name" type="text" placeholder="What should Vela call you?" class="w-full text-sm border border-black/10 rounded-lg px-3 py-2.5 outline-none bg-gray-50">
+      </div>
+      <div>
+        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Your age</div>
+        <div class="flex gap-2 flex-wrap" id="age-pills">
+          <div class="age-pill mode-pill text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selAge(this,'7-10')">7–10</div>
+          <div class="age-pill mode-pill text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selAge(this,'11-13')">11–13</div>
+          <div class="age-pill mode-pill active text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selAge(this,'14-16')">14–16</div>
+          <div class="age-pill mode-pill text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selAge(this,'17-18')">17–18</div>
+        </div>
+      </div>
+      <div>
+        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Claude API key (optional)</div>
+        <div class="text-xs text-gray-400 mb-2">Only needed if your guardian hasn't set one. Free at console.anthropic.com</div>
+        <input id="learner-api-key" type="password" placeholder="sk-ant-..." class="w-full text-sm border border-black/10 rounded-lg px-3 py-2.5 outline-none font-mono bg-gray-50">
+      </div>
+      <button onclick="saveLearnerSettings()" class="w-full bg-ocean text-white font-semibold py-3 rounded-xl hover:opacity-80">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PANEL: GUARDIAN ENTRY REVIEW
+══════════════════════════════════════════════ -->
+<div id="panel-review-entry" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center px-3 pb-3">
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closePanel('review-entry')"></div>
+  <div class="relative bg-white rounded-2xl w-full max-w-lg max-h-screen overflow-y-auto shadow-2xl fade-in">
+    <div class="sticky top-0 bg-white border-b border-black/5 px-5 py-4 flex justify-between items-center rounded-t-2xl">
+      <div class="font-semibold text-ocean">Review entry</div>
+      <button onclick="closePanel('review-entry')" class="text-gray-400 hover:text-gray-600 text-xl">×</button>
+    </div>
+    <div class="p-5" id="review-entry-content"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+const SKILLS = [
+  {id:'writer',label:'Strategic Writer',color:'#3C3489',xpKey:'xp_writer'},
+  {id:'speaker',label:'Speaker',color:'#0F6E56',xpKey:'xp_speaker'},
+  {id:'articulator',label:'Articulator',color:'#993C1D',xpKey:'xp_articulator'},
+  {id:'artist',label:'Artist',color:'#854F0B',xpKey:'xp_artist'},
+  {id:'capturer',label:'Capturer',color:'#185FA5',xpKey:'xp_capturer'},
+  {id:'distiller',label:'Distiller',color:'#72243E',xpKey:'xp_distiller'}
+];
+
+const DEFAULT_GUST_QS = [
+  'Right now I am thinking about...',
+  'A question I cannot stop wondering...',
+  'Something I disagree with almost everyone about...',
+  'An idea nobody knows I have...'
+];
+
+let cfg = {
+  learnerName:'', age:'14-16', learnerApiKey:'',
+  guardianName:'', guardianApiKey:'', guardianDefault:'review',
+  framework:'Oxford Tutorial', instructorWind:'', compass:'What do you believe that almost nobody else believes?',
+  gustQuestions: DEFAULT_GUST_QS
+};
+let xp = {writer:0,speaker:0,articulator:0,artist:0,capturer:0,distiller:0};
+let entries = []; // {id,mode,content,time,status:'pending'|'reviewed'|'wind-done',guardianResponse,windResponse,role}
+let penColor='#0A1628', penSize=4, isDrawing=false, lastX=0, lastY=0;
+let recognition=null, isRecording=false;
+let currentLMode='quill', reviewingId=null, currentExpertRole='writer';
+let brainFilter={mode:'all',query:''};
+
+// ═══════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════
+window.onload = () => {
+  load();
+  renderGustQuestions();
+  renderGuardianPending();
+  renderGuardianReviewed();
+  renderInstructorEntries();
+  renderExpertEntries();
+  renderSkillBars();
+  renderBrainSkillSummary();
+  renderBrainEntries();
+  renderGustEditor();
+  updateStreakLine();
+  document.getElementById('learner-name').value = cfg.learnerName||'';
+  document.getElementById('learner-api-key').value = cfg.learnerApiKey||'';
+  document.getElementById('guardian-name').value = cfg.guardianName||'';
+  document.getElementById('guardian-api-key').value = cfg.guardianApiKey||'';
+  document.getElementById('instructor-wind').value = cfg.instructorWind||'';
+  document.getElementById('instructor-compass').value = cfg.compass||'';
+  document.getElementById('compass-display').textContent = cfg.compass||'What do you believe that almost nobody else believes?';
+  if(cfg.learnerName) document.getElementById('learner-greeting').textContent = `Hey ${cfg.learnerName} ⛵`;
+};
+
+function save(){
+  localStorage.setItem('vela_cfg',JSON.stringify(cfg));
+  localStorage.setItem('vela_xp',JSON.stringify(xp));
+  localStorage.setItem('vela_entries',JSON.stringify(entries));
+}
+function load(){
+  const c=localStorage.getItem('vela_cfg'); if(c) cfg={...cfg,...JSON.parse(c)};
+  const x=localStorage.getItem('vela_xp'); if(x) xp={...xp,...JSON.parse(x)};
+  const e=localStorage.getItem('vela_entries'); if(e) entries=JSON.parse(e);
+}
+
+// ═══════════════════════════════════════
+// SCREENS & PANELS
+// ═══════════════════════════════════════
+function showScreen(name){
+  ['role','learner','guardian','instructor','expert'].forEach(s=>{
+    const el=document.getElementById('screen-'+s);
+    if(el) el.classList.toggle('hidden',s!==name);
+  });
+  if(name==='learner') setTimeout(()=>{setupCanvas();renderSkillBars();},80);
+  if(name==='guardian'){renderGuardianPending();renderGuardianReviewed();}
+  if(name==='instructor'){renderInstructorEntries();}
+  if(name==='expert') renderExpertEntries();
+}
+
+function enterAs(role){
+  if(role==='learner') showScreen('learner');
+  else if(role==='guardian') showScreen('guardian');
+  else if(role==='instructor') showScreen('instructor');
+  else if(role==='expert-writer'){
+    currentExpertRole='writer';
+    document.getElementById('expert-role-label').textContent='Writing Expert';
+    document.getElementById('expert-badge-label').textContent='✍️ Writing Expert';
+    document.getElementById('expert-title').textContent='Writing Expert';
+    document.getElementById('expert-sub').textContent='Review writing entries, give craft feedback, publish prompt packs.';
+    showScreen('expert'); renderExpertEntries();
+  } else if(role==='expert-speaker'){
+    currentExpertRole='speaker';
+    document.getElementById('expert-role-label').textContent='Speaking Expert';
+    document.getElementById('expert-badge-label').textContent='🎙 Speaking Expert';
+    document.getElementById('expert-title').textContent='Speaking Expert';
+    document.getElementById('expert-sub').textContent='Review voice entries, coach rhetoric and delivery.';
+    showScreen('expert'); renderExpertEntries();
+  }
+}
+
+function showPanel(name){
+  closeAllPanels();
+  const el=document.getElementById('panel-'+name);
+  if(el){el.classList.remove('hidden'); renderBrainEntries();}
+}
+function closePanel(name){
+  const el=document.getElementById('panel-'+name);
+  if(el) el.classList.add('hidden');
+}
+function closeAllPanels(){
+  document.querySelectorAll('[id^="panel-"]').forEach(p=>p.classList.add('hidden'));
+}
+
+// ═══════════════════════════════════════
+// LEARNER — MODES
+// ═══════════════════════════════════════
+function setLearnerMode(mode){
+  currentLMode=mode;
+  document.querySelectorAll('.lmode-panel').forEach(p=>p.classList.add('hidden'));
+  document.querySelectorAll('[id^="ltab-"]').forEach(b=>{
+    b.className='mode-tab flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap border border-black/10 bg-white text-gray-500';
+  });
+  document.getElementById('lmode-'+mode).classList.remove('hidden');
+  const tab=document.getElementById('ltab-'+mode);
+  tab.classList.remove('border-black/10','bg-white','text-gray-500');
+  tab.classList.add('tab-active','border-transparent');
+  document.getElementById('response-box').classList.add('hidden');
+  if(mode==='chart') setTimeout(setupCanvas,50);
+}
+
+function countW(el,targetId){
+  const w=el.value.trim().split(/\s+/).filter(Boolean).length;
+  const t=document.getElementById(targetId); if(t) t.textContent=w+' word'+(w===1?'':'s');
+}
+function autoH(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+
+function renderGustQuestions(){
+  const container=document.getElementById('gust-questions');
+  if(!container) return;
+  container.innerHTML=cfg.gustQuestions.map((q,i)=>`
+    <div>
+      <label class="text-xs font-medium text-gray-500 block mb-1">${q}</label>
+      <input type="text" class="gust-input w-full text-sm border-b border-black/10 pb-1 outline-none text-gray-800 bg-transparent" placeholder="answer">
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════
+// SUBMIT ENTRY → GUARDIAN QUEUE
+// ═══════════════════════════════════════
+function submitEntry(mode){
+  const contentMap={
+    quill: document.getElementById('quill-text')?.value||'',
+    tide: document.getElementById('tide-text')?.value||'',
+    chart: document.getElementById('chart-caption')?.value||'Visual drawing',
+    gust: Array.from(document.querySelectorAll('.gust-input')).map((inp,i)=>{
+      const v=inp.value.trim(); return v?cfg.gustQuestions[i]+': '+v:'';
+    }).filter(Boolean).join(' | ')
+  };
+  const content=contentMap[mode]||'';
+  if(!content.trim()||content.trim().length<3){
+    showResponse('⚠ Add a thought first — even one sentence is enough.','error');return;
+  }
+
+  const entry={
+    id:Date.now(),mode,content,
+    time:new Date().toLocaleString(),
+    status: cfg.guardianDefault==='auto-wind'?'wind-pending':
+            cfg.guardianDefault==='manual-only'?'pending':'pending',
+    guardianResponse:null, windResponse:null,
+    learnerName:cfg.learnerName||'Learner'
+  };
+  entries.unshift(entry);
+  gainXP(mode);
+  save();
+  updateStreakLine();
+
+  if(cfg.guardianDefault==='auto-wind'){
+    showResponse('⛵ Your thought is sailing to Wind...','loading');
+    callWind(entry.id, content, mode);
+  } else if(cfg.guardianDefault==='manual-only'){
+    showResponse('📬 Your thought has been sent to your guardian for review.','sent');
+  } else {
+    showResponse('📬 Submitted! Your guardian will review it and respond.','sent');
+  }
+
+  // clear inputs
+  if(mode==='quill'){const t=document.getElementById('quill-text');if(t){t.value='';t.style.height='auto';}}
+  if(mode==='tide'){const t=document.getElementById('tide-text');if(t) t.value='';}
+  if(mode==='chart'){const t=document.getElementById('chart-caption');if(t) t.value='';clearCanvas();}
+  document.querySelectorAll('.gust-input').forEach(i=>i.value='');
+}
+
+function showResponse(msg, type){
+  const box=document.getElementById('response-box');
+  box.classList.remove('hidden');
+  box.classList.add('fade-in');
+  const colors={
+    error:'border-red-200 bg-red-50',
+    loading:'border-blue-200 bg-blue-50',
+    sent:'border-green-200 bg-green-50',
+    wind:'border-black/10 bg-ocean text-white',
+    guardian:'border-green-300 bg-green-50'
+  };
+  const isWind=type==='wind', isGuardian=type==='guardian';
+  box.innerHTML=`
+    <div class="rounded-xl border p-4 ${colors[type]||colors.sent} ${isWind?'':''}">
+      ${isWind?`<div class="flex items-center gap-2 mb-2"><div class="wind-pulse w-2 h-2 rounded-full bg-sail"></div><span class="text-xs font-semibold text-sail uppercase tracking-wider">Wind · ${cfg.framework}</span></div>`:''}
+      ${isGuardian?`<div class="text-xs font-semibold text-green-600 mb-2">🛡 ${cfg.guardianName||'Your guardian'} responded:</div>`:''}
+      <div class="text-sm leading-relaxed font-lora ${isWind?'text-white/85':''}">${msg}</div>
+      ${isWind?`<div class="mt-3 pt-3 border-t border-white/10 flex gap-2 flex-wrap">
+        <button onclick="convertThought('essay')" class="text-xs bg-white/10 text-white/70 px-3 py-1.5 rounded-full hover:bg-white/15">📄 Essay outline</button>
+        <button onclick="convertThought('distil')" class="text-xs bg-white/10 text-white/70 px-3 py-1.5 rounded-full hover:bg-white/15">🎯 Distil to 1 sentence</button>
+        <button onclick="convertThought('questions')" class="text-xs bg-white/10 text-white/70 px-3 py-1.5 rounded-full hover:bg-white/15">❓ Go deeper</button>
+      </div>`:''}
+    </div>`;
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ═══════════════════════════════════════
+// WIND (AI)
+// ═══════════════════════════════════════
+function getApiKey(){
+  return cfg.guardianApiKey||cfg.learnerApiKey||'';
+}
+
+function buildSystemPrompt(mode){
+  const ageMap={
+    '7-10':'You speak to a child aged 7–10. Use simple warm words. Be very encouraging.',
+    '11-13':'You coach a young thinker aged 11–13. Be encouraging and curious. Introduce one new idea per response.',
+    '14-16':'You are an elite thinking coach for a 14–16 year old. Be direct, precise, treat them as a future scholar.',
+    '17-18':'You coach a 17–18 year old preparing for elite universities. Be rigorous and specific.'
+  };
+  const outcomeMap={
+    quill:'Push their thinking with one sharp Socratic question. Name what they actually wrote. End with one concrete next step.',
+    tide:'Coach their spoken clarity. Identify vague phrasing. Suggest how to open this idea in a talk.',
+    chart:'Read their caption as a visual idea. Ask what the drawing reveals that words could not. Suggest one thing to label or add.',
+    gust:'Synthesise their rapid answers into one connected insight they did not see. Then ask the question that connects them all.'
+  };
+  return `You are Wind — Vela's AI thinking coach. ${ageMap[cfg.age]||ageMap['14-16']}
+Apply the ${cfg.framework} method.
+${outcomeMap[mode]||outcomeMap['quill']}
+${cfg.instructorWind?'Additional instructor instructions: '+cfg.instructorWind:''}
+Keep under 180 words. Be specific — name what they actually wrote, not generic praise.`;
+}
+
+let lastWindEntry='';
+async function callWind(entryId, content, mode){
+  const key=getApiKey();
+  if(!key){
+    showResponse('Wind needs an API key. Add yours in ⚙ Settings, or ask your guardian to add theirs.','error');
+    return;
+  }
+  lastWindEntry=content;
+  showResponse('Wind is reading your entry...','loading');
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,system:buildSystemPrompt(mode),messages:[{role:'user',content:`My ${mode} entry: "${content}"`}]})
+    });
+    if(!res.ok){
+      const e=await res.json().catch(()=>({}));
+      if(res.status===401) showResponse('API key issue — check in ⚙ Settings.','error');
+      else if(res.status===400) showResponse('API key needs billing set up at console.anthropic.com → Add funds.','error');
+      else showResponse('Wind hit an error ('+res.status+'). Check your API key.','error');
+      // update entry status
+      const entry=entries.find(e=>e.id===entryId);
+      if(entry) entry.status='pending'; save(); return;
+    }
+    const data=await res.json();
+    const text=data.content?.[0]?.text||'Wind is thinking...';
+    const entry=entries.find(e=>e.id===entryId);
+    if(entry){entry.windResponse=text;entry.status='wind-done';} save();
+    gainXP(mode); renderSkillBars();
+    showResponse(text,'wind');
+  }catch(e){
+    showResponse('Wind could not connect. Check your internet and API key.','error');
+  }
+}
+
+async function convertThought(type){
+  const key=getApiKey(); if(!key||!lastWindEntry) return;
+  const prompts={
+    essay:`Turn this into an essay outline: thesis, 3 arguments, counterargument, conclusion. Entry: "${lastWindEntry}"`,
+    distil:`Distil this to ONE sentence — the truest version. Then explain what you cut and why. Entry: "${lastWindEntry}"`,
+    questions:`Give 5 increasingly deep questions to push thinking further. Start simple, end profound. Entry: "${lastWindEntry}"`
+  };
+  showResponse('Wind is working...','loading');
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:500,messages:[{role:'user',content:prompts[type]}]})
+    });
+    const data=await res.json();
+    showResponse(data.content?.[0]?.text||'Done.','wind');
+  }catch(e){showResponse('Could not connect.','error');}
+}
+
+// ═══════════════════════════════════════
+// GUARDIAN — REVIEW FLOW
+// ═══════════════════════════════════════
+function renderGuardianPending(){
+  const container=document.getElementById('guardian-pending');
+  if(!container) return;
+  const pending=entries.filter(e=>e.status==='pending');
+  if(!pending.length){container.innerHTML='<p class="text-sm text-gray-400 py-4 text-center">No entries waiting. ✓</p>';return;}
+  container.innerHTML=pending.map(e=>`
+    <div class="review-card bg-white border border-black/6 rounded-xl p-4 mb-3 fade-in">
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">${{quill:'✍️',tide:'🎙',chart:'🖌',gust:'⚡'}[e.mode]||'📝'}</span>
+          <span class="text-xs font-semibold text-sail capitalize">${e.mode}</span>
+          <span class="text-xs text-gray-400">${e.time}</span>
+        </div>
+        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">Awaiting review</span>
+      </div>
+      <p class="text-sm text-gray-700 font-lora leading-snug mb-3">${e.content.slice(0,200)}${e.content.length>200?'...':''}</p>
+      <div class="flex gap-2 flex-wrap">
+        <button onclick="openReview(${e.id})" class="text-xs bg-ocean text-white px-3 py-1.5 rounded-full hover:opacity-80">Review & respond</button>
+        <button onclick="approveWindDirect(${e.id})" class="text-xs border border-sail text-sail px-3 py-1.5 rounded-full hover:bg-sail/5">Send to Wind →</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderGuardianReviewed(){
+  const container=document.getElementById('guardian-reviewed');
+  if(!container) return;
+  const reviewed=entries.filter(e=>e.status!=='pending');
+  if(!reviewed.length){container.innerHTML='<p class="text-sm text-gray-400 py-2 text-center">None yet.</p>';return;}
+  container.innerHTML=reviewed.slice(0,10).map(e=>`
+    <div class="bg-white border border-black/6 rounded-xl p-3 mb-2">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-xs font-medium text-gray-500 capitalize">${e.mode} · ${e.time}</span>
+        <span class="text-xs px-2 py-0.5 rounded-full font-medium ${e.status==='wind-done'?'bg-blue-50 text-blue-600':'bg-green-50 text-green-600'}">${e.status==='wind-done'?'Wind responded':'Guardian responded'}</span>
+      </div>
+      <p class="text-xs text-gray-500 font-lora">${e.content.slice(0,80)}...</p>
+    </div>`).join('');
+}
+
+function openReview(id){
+  reviewingId=id;
+  const entry=entries.find(e=>e.id===id);
+  if(!entry) return;
+  const content=document.getElementById('review-entry-content');
+  content.innerHTML=`
+    <div class="mb-4">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-lg">${{quill:'✍️',tide:'🎙',chart:'🖌',gust:'⚡'}[entry.mode]||'📝'}</span>
+        <span class="text-xs font-semibold text-sail capitalize">${entry.mode} entry</span>
+        <span class="text-xs text-gray-400">${entry.time}</span>
+      </div>
+      <div class="bg-gray-50 rounded-xl p-4 font-lora text-sm text-gray-800 leading-relaxed">${entry.content}</div>
+    </div>
+    <div class="mb-4">
+      <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-2">Your response (personal, from you)</label>
+      <textarea id="guardian-reply" rows="4" placeholder="Write your personal response, feedback, or guidance to your learner..." class="w-full text-sm border border-black/10 rounded-xl p-3 outline-none resize-none bg-gray-50 font-lora"></textarea>
+    </div>
+    <div class="flex gap-2 flex-col">
+      <button onclick="submitGuardianReply()" class="w-full bg-green-600 text-white text-sm font-semibold py-3 rounded-xl hover:opacity-85">Send my personal response ✓</button>
+      <button onclick="approveWindDirect(${id})" class="w-full border border-sail text-sail text-sm font-semibold py-3 rounded-xl hover:bg-sail/5">Pass to Wind (AI) instead →</button>
+      <button onclick="sendBothGuardianAndWind()" class="w-full border border-black/10 text-gray-600 text-sm font-semibold py-3 rounded-xl hover:bg-gray-50">Send my response AND Wind →</button>
+    </div>`;
+  showPanel('review-entry');
+}
+
+function submitGuardianReply(){
+  const reply=document.getElementById('guardian-reply')?.value||'';
+  if(!reply.trim()){alert('Please write a response first.');return;}
+  const entry=entries.find(e=>e.id===reviewingId);
+  if(entry){entry.guardianResponse=reply;entry.status='reviewed';save();}
+  closePanel('review-entry');
+  renderGuardianPending();renderGuardianReviewed();
+}
+
+async function approveWindDirect(id){
+  const entry=entries.find(e=>e.id===id);
+  if(!entry) return;
+  closePanel('review-entry');
+  entry.status='wind-pending'; save();
+  const key=cfg.guardianApiKey||cfg.learnerApiKey||'';
+  if(!key){alert('Add your Claude API key in Guardian settings to use Wind.');renderGuardianPending();return;}
+  // call wind on behalf of learner
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,system:buildSystemPrompt(entry.mode),messages:[{role:'user',content:`Learner's ${entry.mode} entry: "${entry.content}"`}]})
+    });
+    const data=await res.json();
+    entry.windResponse=data.content?.[0]?.text||'Wind responded.';
+    entry.status='wind-done'; save();
+  }catch(e){entry.status='pending';save();}
+  renderGuardianPending();renderGuardianReviewed();
+}
+
+async function sendBothGuardianAndWind(){
+  const reply=document.getElementById('guardian-reply')?.value||'';
+  const entry=entries.find(e=>e.id===reviewingId);
+  if(entry&&reply.trim()) entry.guardianResponse=reply;
+  closePanel('review-entry');
+  await approveWindDirect(reviewingId);
+}
+
+// ═══════════════════════════════════════
+// INSTRUCTOR
+// ═══════════════════════════════════════
+function setCompass(){
+  const val=document.getElementById('instructor-compass')?.value||'';
+  if(!val.trim()) return;
+  cfg.compass=val; save();
+  document.getElementById('compass-display').textContent=val;
+  alert('Compass updated for all learners ✓');
+}
+
+function renderGustEditor(){
+  const container=document.getElementById('gust-editor');
+  if(!container) return;
+  container.innerHTML=cfg.gustQuestions.map((q,i)=>`
+    <div class="flex gap-2 items-center">
+      <input type="text" value="${q}" class="flex-1 text-sm border border-black/10 rounded-lg px-3 py-2 outline-none bg-gray-50" id="gust-q-${i}">
+      <button onclick="removeGustQ(${i})" class="text-xs text-red-400 hover:text-red-600 px-2">×</button>
+    </div>`).join('');
+}
+
+function addGustQ(){
+  cfg.gustQuestions.push('New question...');
+  renderGustEditor();
+}
+
+function removeGustQ(i){
+  cfg.gustQuestions.splice(i,1);
+  renderGustEditor();
+}
+
+function saveGustPack(){
+  const inputs=document.querySelectorAll('[id^="gust-q-"]');
+  cfg.gustQuestions=Array.from(inputs).map(i=>i.value).filter(Boolean);
+  save(); renderGustQuestions();
+  alert('Gust questions updated ✓');
+}
+
+function selFramework(el, fw){
+  document.querySelectorAll('.framework-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  cfg.framework=fw;
+}
+
+function saveInstructorSettings(){
+  cfg.instructorWind=document.getElementById('instructor-wind')?.value||'';
+  save(); alert('Framework settings saved ✓');
+}
+
+function renderInstructorEntries(){
+  const container=document.getElementById('instructor-entries');
+  if(!container) return;
+  if(!entries.length){container.innerHTML='<p class="text-sm text-gray-400 text-center py-4">No entries yet.</p>';return;}
+  container.innerHTML=entries.slice(0,20).map(e=>`
+    <div class="border border-black/6 rounded-xl p-3 mb-2">
+      <div class="flex justify-between items-center mb-1">
+        <span class="text-xs font-medium text-sail capitalize">${e.mode}</span>
+        <span class="text-xs text-gray-400">${e.time}</span>
+      </div>
+      <p class="text-xs text-gray-600 font-lora leading-snug">${e.content.slice(0,100)}${e.content.length>100?'...':''}</p>
+      <div class="text-xs text-gray-400 mt-1">Status: ${e.status} ${e.guardianResponse?'· Guardian replied':''}${e.windResponse?'· Wind responded':''}</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════
+// EXPERT
+// ═══════════════════════════════════════
+function renderExpertEntries(){
+  const container=document.getElementById('expert-entries');
+  if(!container) return;
+  const relevant = currentExpertRole==='speaker'
+    ? entries.filter(e=>e.mode==='tide')
+    : entries.filter(e=>e.mode==='quill'||e.mode==='gust');
+  if(!relevant.length){container.innerHTML='<p class="text-sm text-gray-400 text-center py-6">No relevant entries yet.</p>';return;}
+  container.innerHTML=relevant.slice(0,15).map(e=>`
+    <div class="bg-white border border-black/6 rounded-xl p-4 mb-3">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-xs font-semibold text-sail capitalize">${e.mode}</span>
+        <span class="text-xs text-gray-400">${e.time}</span>
+      </div>
+      <p class="text-sm text-gray-700 font-lora leading-snug mb-3">${e.content.slice(0,150)}...</p>
+      <div class="mb-2"><textarea placeholder="Your expert feedback..." class="w-full text-sm border border-black/10 rounded-lg p-2 outline-none resize-none bg-gray-50 min-h-16" id="expert-reply-${e.id}"></textarea></div>
+      <button onclick="submitExpertFeedback(${e.id})" class="text-xs bg-ocean text-white px-3 py-1.5 rounded-full hover:opacity-80">Send feedback</button>
+      ${e.guardianResponse?`<div class="mt-2 text-xs text-green-600 bg-green-50 rounded-lg p-2">Expert: ${e.guardianResponse.slice(0,80)}...</div>`:''}
+    </div>`).join('');
+}
+
+function submitExpertFeedback(id){
+  const reply=document.getElementById('expert-reply-'+id)?.value||'';
+  if(!reply.trim()) return;
+  const entry=entries.find(e=>e.id===id);
+  if(entry){entry.guardianResponse=(entry.guardianResponse?entry.guardianResponse+'\n':'')+`[${currentExpertRole==='speaker'?'Speaking':'Writing'} Expert]: ${reply}`;entry.status='reviewed';save();}
+  renderExpertEntries();
+}
+
+function addPackPrompt(){
+  const container=document.getElementById('pack-prompts');
+  const div=document.createElement('div');
+  div.innerHTML=`<input type="text" placeholder="Prompt..." class="w-full text-sm border border-black/10 rounded-lg px-3 py-2 outline-none bg-gray-50">`;
+  container.appendChild(div);
+}
+
+function publishPack(){
+  const name=document.getElementById('pack-name')?.value||'';
+  const prompts=Array.from(document.querySelectorAll('#pack-prompts input')).map(i=>i.value).filter(Boolean);
+  if(!name||!prompts.length){alert('Add a pack name and at least one prompt.');return;}
+  // add to gust questions
+  cfg.gustQuestions=[...cfg.gustQuestions,...prompts];
+  save(); renderGustQuestions();
+  alert(`Pack "${name}" published with ${prompts.length} prompts ✓`);
+  document.getElementById('pack-name').value='';
+  document.getElementById('pack-prompts').innerHTML='';
+}
+
+// ═══════════════════════════════════════
+// SECOND BRAIN
+// ═══════════════════════════════════════
+function renderBrainSkillSummary(){
+  const container=document.getElementById('brain-skill-summary');
+  if(!container) return;
+  container.innerHTML=SKILLS.map(s=>{
+    const pct=Math.min((xp[s.id]/300)*100,100);
+    return `<div class="text-center">
+      <div class="text-xs font-medium mb-1" style="color:${s.color}">${s.label.split(' ')[0]}</div>
+      <div class="h-1 bg-gray-100 rounded-full"><div class="h-1 rounded-full" style="width:${pct}%;background:${s.color}"></div></div>
+      <div class="text-xs text-gray-400 mt-1">${xp[s.id]} XP</div>
+    </div>`;}).join('');
+}
+
+function renderBrainEntries(){
+  const container=document.getElementById('brain-entries-list');
+  if(!container) return;
+  let filtered=entries;
+  if(brainFilter.mode!=='all') filtered=filtered.filter(e=>e.mode===brainFilter.mode);
+  if(brainFilter.query) filtered=filtered.filter(e=>e.content.toLowerCase().includes(brainFilter.query.toLowerCase()));
+  if(!filtered.length){container.innerHTML='<p class="text-sm text-gray-400 text-center py-8">No entries match.</p>';return;}
+  container.innerHTML=filtered.map(e=>`
+    <div class="journal-entry border border-black/6 rounded-xl p-3 mb-2 bg-white cursor-pointer" onclick="expandEntry(${e.id})">
+      <div class="flex items-center justify-between mb-1.5">
+        <div class="flex items-center gap-2">
+          <span>${{quill:'✍️',tide:'🎙',chart:'🖌',gust:'⚡'}[e.mode]||'📝'}</span>
+          <span class="text-xs font-medium text-sail capitalize">${e.mode}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          ${e.guardianResponse?'<span class="text-xs text-green-600">🛡 responded</span>':''}
+          ${e.windResponse?'<span class="text-xs text-blue-500">🌬 Wind</span>':''}
+          <span class="text-xs text-gray-400">${e.time}</span>
+        </div>
+      </div>
+      <p class="text-sm text-gray-700 font-lora leading-snug">${e.content.slice(0,120)}${e.content.length>120?'...':''}</p>
+      ${e.guardianResponse?`<div class="mt-2 text-xs text-green-700 bg-green-50 rounded-lg px-3 py-2 leading-snug">${e.guardianResponse.slice(0,100)}...</div>`:''}
+      ${e.windResponse?`<div class="mt-2 text-xs text-blue-700 bg-blue-50 rounded-lg px-3 py-2 leading-snug font-lora">${e.windResponse.slice(0,100)}...</div>`:''}
+    </div>`).join('');
+}
+
+function expandEntry(id){
+  const e=entries.find(en=>en.id===id);
+  if(!e) return;
+  const content=document.getElementById('review-entry-content');
+  content.innerHTML=`
+    <div class="mb-4">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-lg">${{quill:'✍️',tide:'🎙',chart:'🖌',gust:'⚡'}[e.mode]}</span>
+        <span class="text-xs text-gray-400">${e.time}</span>
+      </div>
+      <div class="bg-gray-50 rounded-xl p-4 font-lora text-sm text-gray-800 leading-relaxed mb-3">${e.content}</div>
+      ${e.guardianResponse?`<div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-3"><div class="text-xs font-semibold text-green-600 mb-1">🛡 ${cfg.guardianName||'Guardian'} responded:</div><div class="text-sm text-gray-700 font-lora leading-relaxed">${e.guardianResponse}</div></div>`:''}
+      ${e.windResponse?`<div class="bg-ocean rounded-xl p-4"><div class="text-xs font-semibold text-sail mb-1">🌬 Wind · ${cfg.framework}</div><div class="text-sm text-white/85 font-lora leading-relaxed">${e.windResponse}</div></div>`:''}
+    </div>`;
+  showPanel('review-entry');
+}
+
+function filterBrain(query){brainFilter.query=query;renderBrainEntries();}
+function filterBrainMode(mode){
+  brainFilter.mode=mode;
+  document.querySelectorAll('.brain-filter').forEach(b=>{
+    b.className='brain-filter text-xs px-3 py-1 rounded-full border border-black/10 text-gray-500 whitespace-nowrap';
+  });
+  event.target.className='brain-filter text-xs px-3 py-1 rounded-full bg-ocean text-white whitespace-nowrap';
+  renderBrainEntries();
+}
+
+// ═══════════════════════════════════════
+// SKILL BARS
+// ═══════════════════════════════════════
+function renderSkillBars(){
+  const container=document.getElementById('skill-bars-learner');
+  if(!container) return;
+  container.innerHTML=SKILLS.map(s=>{
+    const pct=Math.min((xp[s.id]/300)*100,100);
+    return `<div>
+      <div class="flex justify-between text-xs mb-1">
+        <span style="color:${s.color}90">${s.label}</span>
+        <span class="text-white/30">${xp[s.id]} XP</span>
+      </div>
+      <div class="h-1 bg-white/10 rounded-full">
+        <div class="h-1 rounded-full skill-bar" style="width:${pct}%;background:${s.color}"></div>
+      </div>
+    </div>`;}).join('');
+}
+
+function gainXP(mode){
+  const map={quill:{writer:15,capturer:5},tide:{speaker:15,capturer:5,articulator:8},chart:{artist:15,capturer:5},gust:{distiller:12,capturer:5}};
+  const gains=map[mode]||{capturer:5};
+  Object.entries(gains).forEach(([skill,pts])=>{xp[skill]=Math.min((xp[skill]||0)+pts,999);});
+  save();updateStreakLine();renderSkillBars();renderBrainSkillSummary();
+}
+
+function updateStreakLine(){
+  const el=document.getElementById('learner-streak');
+  if(!el) return;
+  const n=entries.length;
+  el.textContent=n===0?'Start your first entry today.':n===1?'1 entry in your Log':n+' entries · '+Math.min(n,7)+' day streak 🔥';
+}
+
+// ═══════════════════════════════════════
+// SETTINGS SAVE
+// ═══════════════════════════════════════
+function saveLearnerSettings(){
+  cfg.learnerName=document.getElementById('learner-name')?.value||'';
+  cfg.learnerApiKey=document.getElementById('learner-api-key')?.value||'';
+  save();
+  if(cfg.learnerName) document.getElementById('learner-greeting').textContent=`Hey ${cfg.learnerName} ⛵`;
+  closePanel('learner-settings');
+}
+function saveGuardianSettings(){
+  cfg.guardianName=document.getElementById('guardian-name')?.value||'';
+  cfg.guardianApiKey=document.getElementById('guardian-api-key')?.value||'';
+  cfg.guardianDefault=document.getElementById('guardian-default')?.value||'review';
+  save(); alert('Guardian settings saved ✓');
+}
+function selAge(el,age){
+  document.querySelectorAll('.age-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active'); cfg.age=age;
+}
+
+// ═══════════════════════════════════════
+// VOICE
+// ═══════════════════════════════════════
+function toggleVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){document.getElementById('voice-status').textContent='Voice needs Chrome or Safari.';return;}
+  if(!isRecording){
+    recognition=new SR();recognition.continuous=true;recognition.interimResults=true;recognition.lang='en-US';
+    let final='';
+    recognition.onresult=e=>{
+      let interim='';
+      for(let i=e.resultIndex;i<e.results.length;i++){
+        if(e.results[i].isFinal)final+=e.results[i][0].transcript+' ';
+        else interim=e.results[i][0].transcript;
+      }
+      document.getElementById('tide-text').value=final+interim;
+      document.getElementById('voice-status').textContent=interim||'Listening...';
+    };
+    recognition.onerror=()=>stopVoice();
+    recognition.onend=()=>{if(isRecording)recognition.start();};
+    recognition.start();isRecording=true;
+    document.getElementById('voice-btn').textContent='⏹';
+    document.getElementById('voice-status').textContent='Recording... tap ⏹ to stop.';
+  }else stopVoice();
+}
+function stopVoice(){
+  if(recognition)recognition.stop();isRecording=false;
+  document.getElementById('voice-btn').textContent='🎙';
+  document.getElementById('voice-status').textContent='Done. Edit above, then submit.';
+}
+
+// ═══════════════════════════════════════
+// CANVAS
+// ═══════════════════════════════════════
+function setupCanvas(){
+  const canvas=document.getElementById('draw-canvas');
+  if(!canvas)return;
+  canvas.width=canvas.parentElement.clientWidth||560;
+  const ctx=canvas.getContext('2d');
+  ctx.lineCap='round';ctx.lineJoin='round';
+  const pos=e=>{const r=canvas.getBoundingClientRect(),src=e.touches?e.touches[0]:e;return[(src.clientX-r.left)*(canvas.width/r.width),(src.clientY-r.top)*(canvas.height/r.height)];};
+  const start=e=>{e.preventDefault();isDrawing=true;[lastX,lastY]=pos(e);};
+  const draw=e=>{e.preventDefault();if(!isDrawing)return;const[x,y]=pos(e);ctx.strokeStyle=penColor;ctx.lineWidth=penSize;ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(x,y);ctx.stroke();[lastX,lastY]=[x,y];};
+  const stop=()=>isDrawing=false;
+  canvas.removeEventListener('mousedown',canvas._s);canvas.removeEventListener('mousemove',canvas._d);canvas.removeEventListener('mouseup',canvas._e);
+  canvas._s=start;canvas._d=draw;canvas._e=stop;
+  canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',draw);canvas.addEventListener('mouseup',stop);
+  canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',draw,{passive:false});canvas.addEventListener('touchend',stop);
+}
+function clearCanvas(){const c=document.getElementById('draw-canvas');if(c)c.getContext('2d').clearRect(0,0,c.width,c.height);}
+function setPen(color,el){penColor=color;document.querySelectorAll('#pen-dots>div').forEach(d=>{d.style.outline='none';d.style.outlineOffset='0';});el.style.outline='2px solid #0A1628';el.style.outlineOffset='2px';}
+</script>
+</body>
+</html>
