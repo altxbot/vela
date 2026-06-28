@@ -18,6 +18,11 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Inter', sans-serif; background: var(--parchment); color: var(--ink); }
+  @media (max-width: 480px) {
+    .hero-h1 { font-size: 32px; }
+    .wordmark { font-size: 18px; }
+    .app-content { padding-top: 120px; }
+  }
   .lora { font-family: 'Lora', serif; }
 
   /* ── SCREENS ── */
@@ -531,7 +536,7 @@
         <div class="compass-icon">🧭</div>
         <div>
           <div class="compass-label">Today's Compass<span id="journey-tag-label" style="color:#9CA3AF;margin-left:6px;font-weight:400"></span></div>
-          <div class="compass-q" id="compass-text">What do you believe that almost nobody else believes?</div>
+          <div class="compass-q" id="compass-text">What is one thing you noticed today that most people walked right past?</div>
         </div>
       </div>
 
@@ -593,7 +598,11 @@
 
       <div id="mode-gust" style="display:none">
         <div class="entry-area">
-          <div class="gust-list" id="gust-list"></div>
+          <div style="display:flex;gap:6px;padding:12px 16px 0;border-bottom:0.5px solid var(--border);margin-bottom:0">
+          <button onclick="switchGustPack('default')" id="gust-pack-default" style="font-size:11px;padding:4px 10px;border-radius:20px;border:0.5px solid var(--ocean);background:var(--ocean);color:white;cursor:pointer;font-family:'Inter',sans-serif">General</button>
+          <button onclick="switchGustPack('school')" id="gust-pack-school" style="font-size:11px;padding:4px 10px;border-radius:20px;border:0.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif">School mode</button>
+        </div>
+        <div class="gust-list" id="gust-list"></div>
           <div class="entry-footer">
             <span class="entry-wc" style="font-size:11px;color:var(--muted)">Answer fast — first thought wins</span>
             <button class="submit-btn" onclick="submitEntry('gust')">Submit Gust →</button>
@@ -779,6 +788,7 @@
 
       <div>
         <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Your circle's thinking</div>
+        <div id="pending-review-count" style="background:#FEF9C3;border:0.5px solid #FDE68A;border-radius:8px;padding:8px 12px;font-size:12px;color:#92400E;margin-bottom:8px;display:none"></div>
         <div class="cothinker-card">
           <div class="cc-top">
             <div class="cc-avatar" style="background:#EFF6FF">👨</div>
@@ -857,7 +867,7 @@
 
       <div class="panel-label">Claude API key</div>
       <input class="panel-input" id="s-apikey" type="password" placeholder="sk-ant-api03-..." style="font-family:monospace">
-      <div style="font-size:11px;color:#9CA3AF;margin-top:-10px;margin-bottom:14px">Free at console.anthropic.com — stored only in your browser</div>
+      <div style="font-size:11px;color:#9CA3AF;margin-top:-10px;margin-bottom:14px">Free at console.anthropic.com — stored only in your browser. For school launch: your teacher sets one key for the class.</div>
 
       <div class="panel-label">Custom Compass (optional)</div>
       <input class="panel-input" id="s-compass" type="text" placeholder="Override today's question...">
@@ -882,11 +892,17 @@ const SKILLS=[
 ];
 const GUST_DEFAULT=[
   'Right now I am thinking about...',
-  'A question I cannot stop wondering...',
-  'Something I disagree with almost everyone about...',
-  'An idea nobody knows I have yet...'
+  'One question I cannot stop wondering about...',
+  'Something I learned today that surprised me...',
+  'An idea I have that I haven\'t told anyone yet...'
 ];
-let cfg={name:'',age:'14-16',fw:'Oxford Tutorial',outcome:'deepen',apiKey:'',compass:'',extra:'',gustQs:GUST_DEFAULT,activeJourney:null};
+const GUST_SCHOOL=[
+  'One thing from today\'s lesson I actually understood...',
+  'Something from class I am still confused about...',
+  'A question I wish I had asked the teacher today...',
+  'How I could explain today\'s topic to a younger student...'
+];
+let cfg={name:'',age:'14-16',fw:'Oxford Tutorial',outcome:'deepen',apiKey:'',compass:'',extra:'',gustQs:GUST_DEFAULT,activeJourney:null,compassDefault:'What is one thing you noticed today that most people walked right past?'};
 let xp={writer:0,speaker:0,articulator:0,artist:0,capturer:0,distiller:0};
 let entries=[];
 let currentMode='quill',penColor='#0A1628',penSz=4,drawing=false,lx=0,ly=0;
@@ -898,7 +914,7 @@ window.onload=()=>{
   const c=localStorage.getItem('vela4_cfg');if(c)cfg={...cfg,...JSON.parse(c)};
   const x=localStorage.getItem('vela4_xp');if(x)xp={...xp,...JSON.parse(x)};
   const e=localStorage.getItem('vela4_entries');if(e)entries=JSON.parse(e);
-  applySettings();renderSkillBars();renderBrain();renderGust();renderActiveJourney();
+  applySettings();renderSkillBars();renderBrain();renderGust();renderActiveJourney();renderShared();
   if(cfg.name) document.getElementById('log-greeting-name').textContent=cfg.name+' ⛵';
   updateStreak();
 };
@@ -913,6 +929,7 @@ function applySettings(){
   document.getElementById('s-compass').value=cfg.compass||'';
   document.getElementById('s-extra').value=cfg.extra||'';
   if(cfg.compass) document.getElementById('compass-text').textContent=cfg.compass;
+  else if(cfg.compassDefault) document.getElementById('compass-text').textContent=cfg.compassDefault;
 }
 
 // ════════════ SCREENS ════════════
@@ -926,6 +943,17 @@ function enterRole(role){
   if(role==='learner') showTab('log');
   else if(role==='guardian'||role==='instructor') showTab('cothinkers');
   else showTab('cothinkers');
+  // Set greeting label to role
+  const labels={learner:'Captain',guardian:'Guardian view',instructor:'Instructor view',cothinker:'Circle view'};
+  // show role banner in Together tab
+  const banner=document.getElementById('role-banner');
+  if(banner){
+    if(role==='guardian'){banner.style.display='block';banner.style.background='#F0FDF4';banner.style.color='#166534';banner.textContent='🛡 Guardian view — review entries your learners share with the circle';}
+    else if(role==='instructor'){banner.style.display='block';banner.style.background='#F5F3FF';banner.style.color='#4C1D95';banner.textContent='📚 Instructor view — set the Compass, review shared entries, send guidance';}
+    else{banner.style.display='none';}
+  }
+  const greet=document.getElementById('log-greeting-name');
+  if(greet&&role!=='learner') greet.textContent=(labels[role]||role)+' ⛵';
 }
 
 // ════════════ TABS ════════════
@@ -954,6 +982,17 @@ function wc(el,id){
   const t=document.getElementById(id);if(t)t.textContent=w+' word'+(w===1?'':'s');
 }
 function autoH(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+function switchGustPack(pack){
+  cfg.gustQs = pack==='school' ? GUST_SCHOOL : GUST_DEFAULT;
+  // update button styles
+  ['default','school'].forEach(p=>{
+    const btn=document.getElementById('gust-pack-'+p);
+    if(!btn) return;
+    if(p===pack){btn.style.background='var(--ocean)';btn.style.color='white';btn.style.borderColor='var(--ocean)';}
+    else{btn.style.background='transparent';btn.style.color='var(--muted)';btn.style.borderColor='var(--border)';}
+  });
+  renderGust();
+}
 function renderGust(){
   const c=document.getElementById('gust-list');if(!c)return;
   c.innerHTML=cfg.gustQs.map((q,i)=>`<div class="gust-q-item"><label>${q}</label><input type="text" class="gust-input" placeholder="first thought" id="gust-i-${i}"></div>`).join('');
@@ -970,6 +1009,7 @@ function submitEntry(mode){
   const content=map[mode]?map[mode]():'';
   if(!content.trim()||content.trim().length<3){showToast('Add a thought first ✍️');return;}
   lastEntry=content;lastMode=mode;
+  document.getElementById('wind-response-area').innerHTML='';
   const entry={id:Date.now(),mode,content,time:new Date().toLocaleString(),windResponse:null,journey:cfg.activeJourney?.name||null,shared:false};
   entries.unshift(entry);gainXP(mode);save();updateStreak();
   clearInputs(mode);
