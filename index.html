@@ -3,1132 +3,1233 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vela — Set your thinking in motion</title>
+<title>Vela — Think Out Loud. Together.</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  .font-lora{font-family:'Lora',serif}
-  .bg-ocean{background-color:#0A1628}
-  .text-ocean{color:#0A1628}
-  .text-sail{color:#63B3ED}
-  .bg-sail{background-color:#63B3ED}
-  .border-sail{border-color:#63B3ED}
-  .skill-bar{transition:width 1.2s ease-out}
-  .fade-in{animation:fadeIn .35s ease-out}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-  .wind-pulse{animation:pulse 2s ease-in-out infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
-  textarea:focus,input:focus,select:focus{outline:none}
-  .role-card{cursor:pointer;transition:all .2s}
-  .role-card:hover{transform:translateY(-2px)}
-  .role-card.selected{border-color:#63B3ED;background:rgba(99,179,237,.08)}
-  .tab-active{background:#0A1628!important;color:#fff!important;border-color:#0A1628!important}
-  .mode-pill{cursor:pointer;transition:all .15s}
-  .mode-pill.active{background:#0A1628;color:#fff}
-  .review-card{border-left:3px solid #63B3ED}
-  .journal-entry{transition:all .15s}
-  .journal-entry:hover{background:var(--surface-hover,#f9f8f5)}
-  .guardian-badge{background:linear-gradient(135deg,#0A1628,#1a3a5c)}
-  .expert-badge{background:linear-gradient(135deg,#3C3489,#5a51c7)}
-  ::-webkit-scrollbar{width:4px}
-  ::-webkit-scrollbar-track{background:transparent}
-  ::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px}
+  :root {
+    --ocean: #0A1628;
+    --sail: #63B3ED;
+    --parchment: #F5F4F0;
+    --ink: #1A1A2E;
+    --muted: #6B7280;
+    --border: rgba(10,22,40,0.08);
+    --border-strong: rgba(10,22,40,0.15);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--parchment); color: var(--ink); }
+  .lora { font-family: 'Lora', serif; }
+
+  /* ── SCREENS ── */
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: block; }
+
+  /* ── NAV ── */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px;
+    background: rgba(245,244,240,0.94);
+    backdrop-filter: blur(16px);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .wordmark { font-family: 'Lora', serif; font-size: 20px; font-weight: 600; color: var(--ocean); letter-spacing: -0.5px; cursor: pointer; }
+  .wordmark em { color: var(--sail); font-style: normal; }
+  .nav-right { display: flex; align-items: center; gap: 8px; }
+  .nav-pill { font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 20px; border: 0.5px solid var(--border-strong); color: var(--muted); background: white; cursor: pointer; transition: all .15s; white-space: nowrap; }
+  .nav-pill:hover { border-color: var(--sail); color: var(--ocean); }
+  .nav-pill.primary { background: var(--ocean); color: white; border-color: var(--ocean); }
+  .nav-pill.primary:hover { opacity: .85; }
+
+  /* ── LANDING ── */
+  .landing-hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 120px 24px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(99,179,237,0.07) 0%, transparent 70%);
+  }
+  .hero-sail-mark {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -58%);
+    width: 500px; height: 500px; opacity: 0.04;
+    animation: sway 8s ease-in-out infinite;
+  }
+  @keyframes sway { 0%,100%{transform:translate(-50%,-58%) rotate(-1.5deg)} 50%{transform:translate(-50%,-58%) rotate(1.5deg)} }
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--sail); border: 0.5px solid rgba(99,179,237,.3);
+    border-radius: 20px; padding: 4px 14px; display: inline-block; margin-bottom: 24px;
+  }
+  .hero-h1 {
+    font-family: 'Lora', serif;
+    font-size: clamp(38px, 6vw, 68px);
+    font-weight: 600; line-height: 1.08; letter-spacing: -2px;
+    color: var(--ocean); max-width: 680px; margin-bottom: 8px;
+  }
+  .hero-tagline {
+    font-family: 'Lora', serif; font-size: clamp(18px, 2.5vw, 26px);
+    font-style: italic; color: var(--sail); margin-bottom: 20px; letter-spacing: -.3px;
+  }
+  .hero-sub { font-size: 16px; color: var(--muted); max-width: 420px; line-height: 1.65; margin-bottom: 40px; font-weight: 300; }
+  .hero-cta { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 56px; }
+  .btn-ocean { background: var(--ocean); color: white; border: none; border-radius: 12px; padding: 14px 28px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'Inter',sans-serif; transition: all .2s; }
+  .btn-ocean:hover { opacity: .85; transform: translateY(-1px); }
+  .btn-ghost { background: transparent; color: var(--ocean); border: 1.5px solid rgba(10,22,40,.15); border-radius: 12px; padding: 14px 28px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'Inter',sans-serif; transition: all .2s; }
+  .btn-ghost:hover { border-color: var(--ocean); }
+  .mode-strip { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 60px; }
+  .mode-pill { display: flex; align-items: center; gap: 6px; background: white; border: 0.5px solid var(--border); border-radius: 30px; padding: 7px 14px; font-size: 12px; font-weight: 500; color: #4B5563; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+  .mode-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+  /* App preview shell */
+  .app-preview { max-width: 700px; margin: 0 auto; padding: 0 20px 80px; }
+  .shell { background: var(--ocean); border-radius: 20px; overflow: hidden; box-shadow: 0 40px 80px rgba(10,22,40,.3); }
+  .shell-bar { display: flex; align-items: center; gap: 8px; padding: 12px 18px; border-bottom: 0.5px solid rgba(255,255,255,.08); }
+  .shell-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .shell-title { font-size: 12px; color: rgba(255,255,255,.35); flex: 1; text-align: center; }
+  .shell-body { padding: 20px; }
+  .shell-label { font-size: 9px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 6px; }
+  .shell-compass { background: rgba(99,179,237,.1); border: 0.5px solid rgba(99,179,237,.2); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; font-size: 13px; color: rgba(255,255,255,.75); font-family: 'Lora',serif; line-height: 1.5; }
+  .shell-modes { display: flex; gap: 6px; margin-bottom: 14px; }
+  .shell-mode { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; }
+  .shell-mode.on { background: var(--sail); color: var(--ocean); }
+  .shell-mode.off { background: rgba(255,255,255,.07); color: rgba(255,255,255,.35); }
+  .shell-entry { background: rgba(255,255,255,.05); border: 0.5px solid rgba(255,255,255,.1); border-radius: 10px; padding: 14px; font-family: 'Lora',serif; font-size: 13px; color: rgba(255,255,255,.75); line-height: 1.7; min-height: 80px; margin-bottom: 12px; }
+  .shell-wind { background: rgba(99,179,237,.12); border: 0.5px solid rgba(99,179,237,.25); border-radius: 10px; padding: 12px 14px; }
+  .shell-wind-label { font-size: 9px; color: var(--sail); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 5px; font-weight: 600; }
+  .shell-wind-text { font-size: 12px; color: rgba(255,255,255,.65); line-height: 1.6; }
+
+  /* Features section */
+  .features { max-width: 700px; margin: 0 auto; padding: 80px 20px; }
+  .feat-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--sail); margin-bottom: 12px; }
+  .feat-h2 { font-family: 'Lora',serif; font-size: clamp(26px,4vw,40px); font-weight: 600; color: var(--ocean); letter-spacing: -1px; margin-bottom: 48px; line-height: 1.15; }
+  .feat-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 12px; margin-bottom: 60px; }
+  .feat-card { background: white; border: 0.5px solid var(--border); border-radius: 14px; padding: 20px; }
+  .feat-icon { font-size: 22px; margin-bottom: 10px; display: block; }
+  .feat-name { font-size: 15px; font-weight: 600; color: var(--ocean); margin-bottom: 6px; }
+  .feat-body { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* Co-thinking section */
+  .cothink { background: var(--ocean); padding: 80px 20px; text-align: center; }
+  .cothink-inner { max-width: 600px; margin: 0 auto; }
+  .cothink h2 { font-family: 'Lora',serif; font-size: clamp(28px,4vw,44px); font-weight: 600; color: white; letter-spacing: -1px; line-height: 1.15; margin-bottom: 16px; }
+  .cothink h2 em { color: var(--sail); font-style: italic; }
+  .cothink p { font-size: 15px; color: rgba(255,255,255,.5); line-height: 1.65; font-weight: 300; margin-bottom: 40px; }
+  .cothink-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr)); gap: 10px; text-align: left; }
+  .cothink-item { background: rgba(255,255,255,.05); border: 0.5px solid rgba(255,255,255,.08); border-radius: 12px; padding: 16px; }
+  .ci-icon { font-size: 20px; margin-bottom: 8px; }
+  .ci-name { font-size: 13px; font-weight: 600; color: white; margin-bottom: 4px; }
+  .ci-body { font-size: 11px; color: rgba(255,255,255,.4); line-height: 1.5; }
+
+  /* CTA section */
+  .cta-section { padding: 80px 20px; text-align: center; }
+  .cta-inner { max-width: 520px; margin: 0 auto; }
+  .cta-h2 { font-family: 'Lora',serif; font-size: clamp(28px,4vw,44px); font-weight: 600; color: var(--ocean); letter-spacing: -1px; line-height: 1.15; margin-bottom: 12px; }
+  .cta-h2 em { color: var(--sail); font-style: italic; }
+  .cta-sub { font-size: 15px; color: var(--muted); margin-bottom: 32px; font-weight: 300; }
+  .cta-form { display: flex; gap: 8px; max-width: 380px; margin: 0 auto; }
+  .cta-input { flex: 1; padding: 12px 16px; border-radius: 10px; border: 0.5px solid var(--border-strong); background: white; font-size: 14px; font-family: 'Inter',sans-serif; outline: none; transition: border-color .15s; }
+  .cta-input:focus { border-color: var(--sail); }
+  .cta-btn { background: var(--sail); color: var(--ocean); border: none; border-radius: 10px; padding: 12px 20px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter',sans-serif; white-space: nowrap; transition: opacity .15s; }
+  .cta-btn:hover { opacity: .88; }
+  .cta-note { font-size: 11px; color: #9CA3AF; margin-top: 12px; }
+  .footer { padding: 24px 20px; text-align: center; border-top: 0.5px solid var(--border); }
+  .footer span { font-size: 12px; color: #9CA3AF; }
+
+  /* ── ROLES SCREEN ── */
+  .roles-wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 20px 40px; }
+  .roles-title { font-family: 'Lora',serif; font-size: 28px; font-weight: 600; color: var(--ocean); text-align: center; margin-bottom: 4px; letter-spacing: -.5px; }
+  .roles-sub { font-size: 14px; color: var(--muted); text-align: center; margin-bottom: 32px; }
+  .roles-grid { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 10px; }
+  .role-card { display: flex; align-items: center; gap: 14px; padding: 16px 18px; background: white; border: 0.5px solid var(--border); border-radius: 16px; cursor: pointer; transition: all .2s; }
+  .role-card:hover { border-color: var(--sail); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(10,22,40,.08); }
+  .role-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .role-info { flex: 1; }
+  .role-name { font-size: 15px; font-weight: 600; color: var(--ocean); margin-bottom: 2px; }
+  .role-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
+  .role-arr { color: #D1D5DB; font-size: 18px; }
+
+  /* ── APP SCREEN ── */
+  .app-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(245,244,240,.94); backdrop-filter: blur(16px); border-bottom: 0.5px solid var(--border); }
+  .app-nav-top { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; }
+  .app-nav-tabs { display: flex; border-top: 0.5px solid var(--border); overflow-x: auto; }
+  .app-tab { flex: 1; padding: 10px 8px; font-size: 12px; font-weight: 500; text-align: center; color: var(--muted); border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all .15s; min-width: 70px; }
+  .app-tab.active { color: var(--ocean); border-bottom-color: var(--sail); }
+  .app-content { max-width: 560px; margin: 0 auto; padding: 130px 16px 100px; }
+
+  /* ── LOG TAB ── */
+  .greeting-line { font-size: 11px; font-weight: 600; color: var(--sail); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 3px; }
+  .greeting-name { font-family: 'Lora',serif; font-size: 22px; font-weight: 600; color: var(--ocean); margin-bottom: 3px; }
+  .streak-line { font-size: 11px; color: var(--muted); margin-bottom: 16px; }
+  .wake-card { background: var(--ocean); border-radius: 16px; padding: 14px 16px; margin-bottom: 16px; }
+  .wake-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .wake-title { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.3); }
+  .wake-link { font-size: 11px; color: rgba(99,179,237,.6); cursor: pointer; }
+  .skill-row { margin-bottom: 7px; }
+  .skill-top { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 3px; }
+  .skill-bar-bg { height: 3px; background: rgba(255,255,255,.1); border-radius: 2px; }
+  .skill-bar-fill { height: 3px; border-radius: 2px; transition: width 1.2s ease-out; }
+  .compass-card { background: white; border: 0.5px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; display: flex; gap: 12px; align-items: flex-start; }
+  .compass-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .compass-label { font-size: 10px; font-weight: 600; color: var(--sail); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+  .compass-q { font-size: 13px; font-weight: 500; color: var(--ocean); line-height: 1.45; }
+  .mode-tabs { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 2px; }
+  .mode-tab-btn { display: flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; white-space: nowrap; border: 0.5px solid var(--border); background: white; color: #6B7280; cursor: pointer; transition: all .15s; }
+  .mode-tab-btn.on { background: var(--ocean); color: white; border-color: var(--ocean); }
+  .entry-area { background: white; border: 0.5px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 12px; }
+  .entry-textarea { width: 100%; padding: 16px; font-family: 'Lora',serif; font-size: 15px; color: var(--ink); line-height: 1.7; resize: none; border: none; outline: none; min-height: 140px; background: transparent; }
+  .entry-footer { padding: 10px 16px; border-top: 0.5px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .entry-wc { font-size: 11px; color: #D1D5DB; }
+  .submit-btn { background: var(--ocean); color: white; border: none; border-radius: 20px; padding: 7px 18px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Inter',sans-serif; transition: opacity .15s; }
+  .submit-btn:hover { opacity: .8; }
+  .tide-center { text-align: center; padding: 24px 0; }
+  .mic-btn { width: 64px; height: 64px; border-radius: 50%; background: var(--ocean); color: white; font-size: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; cursor: pointer; border: none; transition: all .2s; }
+  .mic-btn.rec { background: #DC2626; animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
+  .mic-status { font-size: 12px; color: var(--muted); }
+  .tide-transcript { width: 100%; padding: 12px; font-family: 'Lora',serif; font-size: 14px; color: var(--ink); border: none; outline: none; resize: none; min-height: 80px; background: #F9F8F5; border-radius: 10px; margin-top: 12px; }
+  .chart-toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+  .pen-dot { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; flex-shrink: 0; }
+  .draw-canvas { width: 100%; display: block; cursor: crosshair; background: #FAFAF8; }
+  .chart-caption { width: 100%; padding: 10px 14px; font-size: 13px; border: none; outline: none; border-top: 0.5px solid var(--border); font-family: 'Inter',sans-serif; background: white; color: var(--ink); }
+  .gust-list { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .gust-q-item label { font-size: 11px; font-weight: 500; color: var(--muted); display: block; margin-bottom: 4px; }
+  .gust-q-item input { width: 100%; border: none; border-bottom: 0.5px solid var(--border); padding-bottom: 5px; font-size: 14px; color: var(--ink); outline: none; background: transparent; font-family: 'Lora',serif; }
+  .wind-box { background: var(--ocean); border-radius: 14px; padding: 16px 18px; margin-bottom: 12px; animation: fadeUp .35s ease-out; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .wind-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .wind-pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--sail); animation: pulse 2s ease-in-out infinite; }
+  .wind-label { font-size: 10px; font-weight: 600; color: var(--sail); text-transform: uppercase; letter-spacing: .08em; }
+  .wind-text { font-size: 13px; color: rgba(255,255,255,.8); line-height: 1.7; font-family: 'Lora',serif; }
+  .wind-actions { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 0.5px solid rgba(255,255,255,.08); }
+  .wind-act-btn { font-size: 11px; background: rgba(255,255,255,.08); color: rgba(255,255,255,.6); border: none; border-radius: 20px; padding: 5px 12px; cursor: pointer; font-family: 'Inter',sans-serif; transition: all .15s; }
+  .wind-act-btn:hover { background: rgba(255,255,255,.14); }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ocean); color: white; font-size: 13px; padding: 10px 20px; border-radius: 20px; z-index: 999; animation: fadeUp .3s ease-out; white-space: nowrap; }
+
+  /* ── JOURNEY TAB ── */
+  .journey-header { margin-bottom: 20px; }
+  .journey-h { font-family: 'Lora',serif; font-size: 22px; font-weight: 600; color: var(--ocean); margin-bottom: 4px; }
+  .journey-sub { font-size: 13px; color: var(--muted); }
+  .active-journey-card { background: var(--ocean); border-radius: 14px; padding: 16px 18px; margin-bottom: 20px; }
+  .aj-label { font-size: 10px; font-weight: 600; color: rgba(99,179,237,.6); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .aj-name { font-family: 'Lora',serif; font-size: 18px; font-weight: 600; color: white; margin-bottom: 4px; }
+  .aj-phase { font-size: 12px; color: rgba(255,255,255,.4); margin-bottom: 12px; }
+  .aj-bar-bg { height: 3px; background: rgba(255,255,255,.1); border-radius: 2px; margin-bottom: 10px; }
+  .aj-bar-fill { height: 3px; background: var(--sail); border-radius: 2px; }
+  .aj-stats { display: flex; gap: 16px; }
+  .aj-stat { font-size: 11px; color: rgba(255,255,255,.4); }
+  .aj-stat span { display: block; font-size: 16px; font-weight: 600; color: white; }
+  .cat-section { margin-bottom: 20px; }
+  .cat-title { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: .06em; }
+  .journey-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .journey-item { background: white; border: 0.5px solid var(--border); border-radius: 10px; padding: 12px; cursor: pointer; transition: all .15s; }
+  .journey-item:hover { border-color: var(--sail); }
+  .ji-icon { font-size: 16px; margin-bottom: 5px; }
+  .ji-name { font-size: 12px; font-weight: 600; color: var(--ocean); margin-bottom: 2px; }
+  .ji-hook { font-size: 10px; color: var(--muted); line-height: 1.4; }
+
+  /* ── BRAIN TAB ── */
+  .brain-header { margin-bottom: 16px; }
+  .brain-h { font-family: 'Lora',serif; font-size: 22px; font-weight: 600; color: var(--ocean); margin-bottom: 4px; }
+  .brain-search { width: 100%; padding: 10px 14px; border: 0.5px solid var(--border); border-radius: 10px; background: white; font-size: 13px; font-family: 'Inter',sans-serif; outline: none; color: var(--ink); margin-bottom: 10px; transition: border-color .15s; }
+  .brain-search:focus { border-color: var(--sail); }
+  .brain-filters { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px; }
+  .brain-filter { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 0.5px solid var(--border); background: white; color: var(--muted); cursor: pointer; white-space: nowrap; transition: all .15s; }
+  .brain-filter.on { background: var(--ocean); color: white; border-color: var(--ocean); }
+  .brain-entry { background: white; border: 0.5px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; transition: all .15s; }
+  .brain-entry:hover { border-color: rgba(99,179,237,.4); }
+  .be-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .be-mode { font-size: 11px; font-weight: 600; color: var(--sail); }
+  .be-time { font-size: 10px; color: #D1D5DB; }
+  .be-content { font-size: 13px; color: #374151; font-family: 'Lora',serif; line-height: 1.55; margin-bottom: 6px; }
+  .be-responses { display: flex; gap: 5px; flex-wrap: wrap; }
+  .be-badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+  .be-badge.wind { background: #EFF6FF; color: #1D4ED8; }
+  .be-badge.guardian { background: #F0FDF4; color: #166534; }
+  .be-badge.journey { background: rgba(99,179,237,.1); color: #0369A1; }
+
+  /* ── COTHINKERS TAB ── */
+  .co-header { margin-bottom: 16px; }
+  .co-h { font-family: 'Lora',serif; font-size: 22px; font-weight: 600; color: var(--ocean); margin-bottom: 4px; }
+  .co-sub { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  .cothinker-card { background: white; border: 0.5px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; }
+  .cc-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .cc-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .cc-name { font-size: 14px; font-weight: 600; color: var(--ocean); }
+  .cc-role { font-size: 11px; color: var(--muted); }
+  .cc-entry { background: #F9F8F5; border-radius: 8px; padding: 10px 12px; font-family: 'Lora',serif; font-size: 12px; color: #374151; line-height: 1.55; margin-bottom: 8px; }
+  .cc-actions { display: flex; gap: 6px; }
+  .cc-act { font-size: 11px; padding: 5px 12px; border-radius: 20px; border: 0.5px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-family: 'Inter',sans-serif; transition: all .15s; }
+  .cc-act:hover { border-color: var(--sail); color: var(--ocean); }
+  .cc-act.primary { background: var(--ocean); color: white; border-color: var(--ocean); }
+  .invite-card { background: rgba(99,179,237,.06); border: 0.5px dashed rgba(99,179,237,.4); border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 8px; }
+  .invite-icon { font-size: 24px; margin-bottom: 8px; }
+  .invite-title { font-size: 14px; font-weight: 600; color: var(--ocean); margin-bottom: 4px; }
+  .invite-sub { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .invite-btn { background: var(--ocean); color: white; border: none; border-radius: 8px; padding: 8px 20px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter',sans-serif; }
+  .group-pill { font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 500; display: inline-block; margin: 2px; }
+
+  /* ── SETTINGS PANEL ── */
+  .panel-overlay { position: fixed; inset: 0; z-index: 200; display: flex; align-items: flex-end; justify-content: center; background: rgba(0,0,0,.4); backdrop-filter: blur(4px); }
+  .panel-overlay.hidden { display: none; }
+  .panel-box { background: white; border-radius: 20px 20px 0 0; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; }
+  .panel-header { position: sticky; top: 0; background: white; padding: 16px 20px; border-bottom: 0.5px solid var(--border); display: flex; justify-content: space-between; align-items: center; border-radius: 20px 20px 0 0; }
+  .panel-title { font-size: 15px; font-weight: 600; color: var(--ocean); }
+  .panel-close { font-size: 22px; color: #9CA3AF; cursor: pointer; background: none; border: none; line-height: 1; }
+  .panel-body { padding: 20px; }
+  .panel-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+  .panel-input { width: 100%; border: 0.5px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: 'Inter',sans-serif; outline: none; color: var(--ink); margin-bottom: 14px; background: #F9F8F5; transition: border-color .15s; }
+  .panel-input:focus { border-color: var(--sail); }
+  .panel-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .panel-pill { font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 0.5px solid var(--border); background: white; color: var(--muted); cursor: pointer; transition: all .15s; }
+  .panel-pill.on { background: var(--ocean); color: white; border-color: var(--ocean); }
+  .panel-save { width: 100%; background: var(--ocean); color: white; border: none; border-radius: 12px; padding: 13px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter',sans-serif; margin-top: 4px; transition: opacity .15s; }
+  .panel-save:hover { opacity: .85; }
 </style>
 </head>
-<body class="bg-gray-50 font-sans min-h-screen" style="font-family:'Inter',sans-serif">
+<body>
 
-<!-- ══════════════════════════════════════════════
-     SCREEN: ROLE SELECTOR (entry point)
-══════════════════════════════════════════════ -->
-<div id="screen-role" class="min-h-screen flex flex-col items-center justify-center px-4 py-12">
-  <div class="font-lora text-4xl font-semibold text-ocean mb-1">Ve<span class="text-sail">la</span></div>
-  <p class="text-sm text-gray-400 mb-10">Set your thinking in motion.</p>
-
-  <div class="w-full max-w-lg">
-    <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4 text-center">Who are you today?</p>
-    <div class="grid grid-cols-1 gap-3">
-
-      <div class="role-card border border-black/8 rounded-2xl p-4 bg-white flex items-center gap-4" onclick="enterAs('learner')">
-        <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-2xl flex-shrink-0">🧭</div>
-        <div>
-          <div class="font-semibold text-ocean">Learner</div>
-          <div class="text-xs text-gray-400 mt-0.5">Write, speak, draw or rapid-fire your thoughts. Build your second brain.</div>
-        </div>
-        <div class="ml-auto text-gray-300">→</div>
-      </div>
-
-      <div class="role-card border border-black/8 rounded-2xl p-4 bg-white flex items-center gap-4" onclick="enterAs('guardian')">
-        <div class="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-2xl flex-shrink-0">🛡</div>
-        <div>
-          <div class="font-semibold text-ocean">Guardian</div>
-          <div class="text-xs text-gray-400 mt-0.5">Parent or teacher — review entries, respond personally, or pass to Wind.</div>
-        </div>
-        <div class="ml-auto text-gray-300">→</div>
-      </div>
-
-      <div class="role-card border border-black/8 rounded-2xl p-4 bg-white flex items-center gap-4" onclick="enterAs('instructor')">
-        <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-2xl flex-shrink-0">📚</div>
-        <div>
-          <div class="font-semibold text-ocean">Instructor / Teacher</div>
-          <div class="text-xs text-gray-400 mt-0.5">Set frameworks, publish prompts, craft the learner's journey.</div>
-        </div>
-        <div class="ml-auto text-gray-300">→</div>
-      </div>
-
-      <div class="role-card border border-black/8 rounded-2xl p-4 bg-white flex items-center gap-4" onclick="enterAs('expert-writer')">
-        <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-2xl flex-shrink-0">✍️</div>
-        <div>
-          <div class="font-semibold text-ocean">Writing Expert</div>
-          <div class="text-xs text-gray-400 mt-0.5">Review writing entries, give craft feedback, publish prompt packs.</div>
-        </div>
-        <div class="ml-auto text-gray-300">→</div>
-      </div>
-
-      <div class="role-card border border-black/8 rounded-2xl p-4 bg-white flex items-center gap-4" onclick="enterAs('expert-speaker')">
-        <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-2xl flex-shrink-0">🎙</div>
-        <div>
-          <div class="font-semibold text-ocean">Speaking Expert</div>
-          <div class="text-xs text-gray-400 mt-0.5">Review voice entries, coach rhetoric and delivery, set speaking challenges.</div>
-        </div>
-        <div class="ml-auto text-gray-300">→</div>
-      </div>
-
-    </div>
-    <p class="text-xs text-gray-300 text-center mt-6">vela.myaltx.com · An Altx venture</p>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     SCREEN: LEARNER
-══════════════════════════════════════════════ -->
-<div id="screen-learner" class="hidden min-h-screen">
-
-  <!-- NAV -->
-  <nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-white/92 backdrop-blur-md border-b border-black/5">
-    <button onclick="showScreen('role')" class="font-lora text-lg font-semibold text-ocean">Ve<span class="text-sail">la</span></button>
-    <div class="flex items-center gap-2">
-      <button onclick="showPanel('second-brain')" class="text-xs px-3 py-1.5 rounded-full border border-black/10 text-gray-500 hover:border-black/30 transition-colors">🧠 Second Brain</button>
-      <button onclick="showPanel('learner-settings')" class="text-xs px-3 py-1.5 rounded-full border border-black/10 text-gray-500 hover:border-black/30 transition-colors">⚙ Settings</button>
+<!-- ════════════════════════════
+     LANDING SCREEN
+════════════════════════════ -->
+<div id="screen-landing" class="screen active">
+  <nav class="nav">
+    <div class="wordmark" onclick="goto('landing')">Ve<em>la</em></div>
+    <div class="nav-right">
+      <button class="nav-pill" onclick="goto('roles')">Sign in</button>
+      <button class="nav-pill primary" onclick="goto('roles')">Start free →</button>
     </div>
   </nav>
 
-  <div class="max-w-xl mx-auto px-4 pt-20 pb-10">
+  <div class="landing-hero">
+    <div class="hero-bg"></div>
+    <svg class="hero-sail-mark" viewBox="0 0 200 220" fill="none" aria-hidden="true">
+      <path d="M60 180 C60 180 60 20 150 10 C150 10 110 100 60 180Z" fill="#0A1628"/>
+      <path d="M60 180 C60 180 120 100 160 120 L60 180Z" fill="#63B3ED"/>
+      <line x1="60" y1="10" x2="60" y2="185" stroke="#0A1628" stroke-width="5" stroke-linecap="round"/>
+    </svg>
 
-    <!-- greeting -->
-    <div class="mb-5">
-      <p class="text-xs font-semibold text-sail uppercase tracking-wider mb-0.5" id="learner-greeting">Good morning, Captain ⛵</p>
-      <h2 class="font-lora text-2xl font-semibold text-ocean">Your Log is open.</h2>
-      <p class="text-xs text-gray-400 mt-1" id="learner-streak">Start your first entry today.</p>
+    <span class="hero-eyebrow">The Co-Thinking OS · An Altx venture</span>
+    <h1 class="hero-h1">Where thinking<br>finds its direction.</h1>
+    <div class="hero-tagline">Think Out Loud. Together.</div>
+    <p class="hero-sub">Capture every thought. Walk every journey. Build your second brain — alone and with the people who matter.</p>
+
+    <div class="hero-cta">
+      <button class="btn-ocean" onclick="goto('roles')">Start thinking free →</button>
+      <button class="btn-ghost" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">See how it works</button>
     </div>
 
-    <!-- wake / skill bars -->
-    <div class="bg-ocean rounded-2xl p-4 mb-5">
-      <div class="flex justify-between items-center mb-3">
-        <p class="text-xs text-white/40 uppercase tracking-wider">Your Wake — 6 skills</p>
-        <button onclick="showPanel('second-brain')" class="text-xs text-sail/60 hover:text-sail">Full brain →</button>
+    <div class="mode-strip">
+      <div class="mode-pill"><div class="mode-dot" style="background:#3C3489"></div>✍️ Quill · Write</div>
+      <div class="mode-pill"><div class="mode-dot" style="background:#0F6E56"></div>🎙 Tide · Speak</div>
+      <div class="mode-pill"><div class="mode-dot" style="background:#854F0B"></div>🖌 Chart · Draw</div>
+      <div class="mode-pill"><div class="mode-dot" style="background:#993C1D"></div>⚡ Gust · Rapid fire</div>
+      <div class="mode-pill"><div class="mode-dot" style="background:#63B3ED"></div>🗺 Journey · Navigate</div>
+    </div>
+  </div>
+
+  <!-- App preview -->
+  <div class="app-preview">
+    <div class="shell">
+      <div class="shell-bar">
+        <div class="shell-dot" style="background:#FF5F57"></div>
+        <div class="shell-dot" style="background:#FFBD2E"></div>
+        <div class="shell-dot" style="background:#28C840"></div>
+        <div class="shell-title">vela.myaltx.com — Log</div>
       </div>
-      <div class="space-y-2" id="skill-bars-learner"></div>
-    </div>
-
-    <!-- compass -->
-    <div class="bg-white border border-black/6 rounded-xl p-4 mb-4 flex items-start gap-3">
-      <div class="text-xl">🧭</div>
-      <div class="flex-1">
-        <div class="text-xs font-semibold text-sail uppercase tracking-wider mb-1">Today's Compass</div>
-        <div class="text-sm text-gray-700 font-medium leading-snug" id="compass-display">What do you believe that almost nobody else believes?</div>
-      </div>
-    </div>
-
-    <!-- mode tabs -->
-    <div class="flex gap-2 mb-3 overflow-x-auto pb-1">
-      <button onclick="setLearnerMode('quill')" id="ltab-quill" class="mode-tab tab-active flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap border border-transparent">✍️ Quill</button>
-      <button onclick="setLearnerMode('tide')" id="ltab-tide" class="mode-tab flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap border border-black/10 bg-white text-gray-500">🎙 Tide</button>
-      <button onclick="setLearnerMode('chart')" id="ltab-chart" class="mode-tab flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap border border-black/10 bg-white text-gray-500">🖌 Chart</button>
-      <button onclick="setLearnerMode('gust')" id="ltab-gust" class="mode-tab flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap border border-black/10 bg-white text-gray-500">⚡ Gust</button>
-    </div>
-
-    <!-- QUILL -->
-    <div id="lmode-quill" class="lmode-panel">
-      <div class="bg-white border border-black/6 rounded-xl overflow-hidden mb-3">
-        <textarea id="quill-text" placeholder="Just start. What's in your head right now? Any thought. Any language." class="w-full p-4 text-base text-gray-800 leading-relaxed resize-none outline-none min-h-36 font-lora" oninput="countW(this,'quill-wc');autoH(this)"></textarea>
-        <div class="px-4 py-2.5 border-t border-black/5 flex justify-between items-center">
-          <span class="text-xs text-gray-300" id="quill-wc">0 words</span>
-          <button onclick="submitEntry('quill')" class="bg-ocean text-white text-xs font-semibold px-4 py-1.5 rounded-full hover:opacity-80 transition-opacity">Submit thought →</button>
+      <div class="shell-body">
+        <div class="shell-label">Today's Compass · Learning Journey</div>
+        <div class="shell-compass">"What's one thing you understood today that you couldn't have explained yesterday?"</div>
+        <div class="shell-modes">
+          <div class="shell-mode on">✍️ Quill</div>
+          <div class="shell-mode off">🎙 Tide</div>
+          <div class="shell-mode off">🖌 Chart</div>
+          <div class="shell-mode off">⚡ Gust</div>
+        </div>
+        <div class="shell-entry">I think I finally understand compound interest. It's not just that money grows — it's that the rate of growth itself grows. So the longer you wait to start, the more you're losing not just the returns, but the returns on the returns.</div>
+        <div class="shell-wind">
+          <div class="shell-wind-label">⟡ Wind · Oxford Tutorial</div>
+          <div class="shell-wind-text">You've grasped the exponential nature — that's the hard part most people miss. Now challenge yourself: at what point does the initial amount matter less than the time invested? Can you find the crossover with real numbers?</div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- TIDE -->
-    <div id="lmode-tide" class="lmode-panel hidden">
-      <div class="bg-white border border-black/6 rounded-xl p-5 text-center mb-3">
-        <button id="voice-btn" onclick="toggleVoice()" class="w-14 h-14 rounded-full bg-ocean text-2xl flex items-center justify-center mx-auto mb-3 hover:opacity-80 transition-opacity">🎙</button>
-        <p class="text-xs text-gray-400" id="voice-status">Tap to speak. Tide is listening.</p>
-        <textarea id="tide-text" class="w-full mt-3 p-3 text-sm text-gray-700 bg-gray-50 border border-black/5 rounded-lg resize-none outline-none min-h-20 font-lora" placeholder="Your words appear here..."></textarea>
-        <button onclick="submitEntry('tide')" class="mt-3 bg-ocean text-white text-xs font-semibold px-4 py-1.5 rounded-full hover:opacity-80">Submit thought →</button>
+  <!-- Features -->
+  <div class="features" id="features">
+    <div class="feat-eyebrow">Everything in one platform</div>
+    <div class="feat-h2">The Log. The Journey.<br>The Brain. Together.</div>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <span class="feat-icon">📝</span>
+        <div class="feat-name">Vela Log</div>
+        <div class="feat-body">Four modes for any kind of thought — write in Quill, speak in Tide, sketch in Chart, rapid-fire in Gust. Wind, your AI coach, deepens every entry using elite frameworks.</div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🗺</span>
+        <div class="feat-name">Vela Journey</div>
+        <div class="feat-body">64 journey types across 10 life categories — Learning, Becoming, Building, Healing, Launching and more. Pick one. Your Log entries tag to it automatically.</div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🧠</span>
+        <div class="feat-name">Second Brain</div>
+        <div class="feat-body">Every thought ever captured — searchable, filterable by mode, journey, or date. Your intellectual record building over years. Nothing escapes.</div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🤝</span>
+        <div class="feat-name">Co-Thinkers</div>
+        <div class="feat-body">Invite family, a class, or a circle. Share selected thoughts. Respond to each other. Think together — privately, with real depth, without social media noise.</div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🛡</span>
+        <div class="feat-name">Guardian layer</div>
+        <div class="feat-body">For children: guardians review entries before Wind processes them. Respond personally or pass to AI. Human mentorship with AI when it earns it.</div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🌍</span>
+        <div class="feat-name">Vela Port</div>
+        <div class="feat-body">Your public intellectual gallery. Choose what to exhibit. The best of your thinking, curated and visible. Your intellectual identity online.</div>
       </div>
     </div>
+  </div>
 
-    <!-- CHART -->
-    <div id="lmode-chart" class="lmode-panel hidden">
-      <div class="bg-white border border-black/6 rounded-xl overflow-hidden mb-3">
-        <div class="px-4 py-2.5 border-b border-black/5 flex gap-2.5 items-center">
-          <span class="text-xs text-gray-400">Pen:</span>
-          <div class="flex gap-2" id="pen-dots">
-            <div onclick="setPen('#0A1628',this)" class="w-5 h-5 rounded-full cursor-pointer ring-2 ring-ocean ring-offset-1" style="background:#0A1628"></div>
-            <div onclick="setPen('#63B3ED',this)" class="w-5 h-5 rounded-full cursor-pointer" style="background:#63B3ED"></div>
-            <div onclick="setPen('#993C1D',this)" class="w-5 h-5 rounded-full cursor-pointer" style="background:#993C1D"></div>
-            <div onclick="setPen('#0F6E56',this)" class="w-5 h-5 rounded-full cursor-pointer" style="background:#0F6E56"></div>
+  <!-- Co-thinking section -->
+  <div class="cothink">
+    <div class="cothink-inner">
+      <h2>Not a journal.<br>A <em>co-thinking OS.</em></h2>
+      <p>Vela is private by default. But thinking grows faster when it meets other minds. Invite your people — family, class, team, circle — and think together with real depth.</p>
+      <div class="cothink-grid">
+        <div class="cothink-item">
+          <div class="ci-icon">👨‍👩‍👧‍👦</div>
+          <div class="ci-name">Family</div>
+          <div class="ci-body">Parents and children thinking together daily</div>
+        </div>
+        <div class="cothink-item">
+          <div class="ci-icon">🏫</div>
+          <div class="ci-name">Class</div>
+          <div class="ci-body">Teacher sets frameworks, students think deeply</div>
+        </div>
+        <div class="cothink-item">
+          <div class="ci-icon">🫂</div>
+          <div class="ci-name">Circle</div>
+          <div class="ci-body">Friends, peers, mentors — a thinking community</div>
+        </div>
+        <div class="cothink-item">
+          <div class="ci-icon">🏢</div>
+          <div class="ci-name">Team</div>
+          <div class="ci-body">Professionals thinking strategically together</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="cta-inner">
+      <h2 class="cta-h2">Your thoughts deserve<br>a <em>real home.</em></h2>
+      <p class="cta-sub">Join the early fleet. Free for founding members.</p>
+      <div class="cta-form">
+        <input class="cta-input" type="email" placeholder="your@email.com" id="waitlist-email">
+        <button class="cta-btn" onclick="joinWaitlist()">Set sail →</button>
+      </div>
+      <div class="cta-note" id="waitlist-msg">No spam. Just your place in the fleet.</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>© 2026 Vela · Think Out Loud. Together. · An Altx venture · myaltx.com</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     ROLES SCREEN
+════════════════════════════ -->
+<div id="screen-roles" class="screen">
+  <nav class="nav">
+    <div class="wordmark" onclick="goto('landing')">Ve<em>la</em></div>
+    <button class="nav-pill" onclick="goto('landing')">← Back</button>
+  </nav>
+  <div class="roles-wrap">
+    <div class="roles-title">Who are you today?</div>
+    <div class="roles-sub">Choose your role to enter your space</div>
+    <div class="roles-grid">
+      <div class="role-card" onclick="enterRole('learner')">
+        <div class="role-icon" style="background:#EFF6FF">🧭</div>
+        <div class="role-info">
+          <div class="role-name">Learner</div>
+          <div class="role-desc">Log thoughts, walk journeys, build your second brain</div>
+        </div>
+        <div class="role-arr">›</div>
+      </div>
+      <div class="role-card" onclick="enterRole('guardian')">
+        <div class="role-icon" style="background:#F0FDF4">🛡</div>
+        <div class="role-info">
+          <div class="role-name">Guardian</div>
+          <div class="role-desc">Review entries, respond personally or pass to Wind</div>
+        </div>
+        <div class="role-arr">›</div>
+      </div>
+      <div class="role-card" onclick="enterRole('instructor')">
+        <div class="role-icon" style="background:#F5F3FF">📚</div>
+        <div class="role-info">
+          <div class="role-name">Instructor</div>
+          <div class="role-desc">Set frameworks, Compass questions and Gust packs</div>
+        </div>
+        <div class="role-arr">›</div>
+      </div>
+      <div class="role-card" onclick="enterRole('cothinker')">
+        <div class="role-icon" style="background:#FFF7ED">🤝</div>
+        <div class="role-info">
+          <div class="role-name">Co-Thinker</div>
+          <div class="role-desc">Join a thinking circle — family, class, or peer group</div>
+        </div>
+        <div class="role-arr">›</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     APP SCREEN
+════════════════════════════ -->
+<div id="screen-app" class="screen">
+  <div class="app-nav">
+    <div class="app-nav-top">
+      <div class="wordmark" onclick="goto('roles')" style="font-size:18px">Ve<em>la</em></div>
+      <div class="nav-right">
+        <button class="nav-pill" onclick="showPanel('settings')">⚙ Wind</button>
+      </div>
+    </div>
+    <div class="app-nav-tabs">
+      <button class="app-tab active" onclick="showTab('log')" id="tab-log">📝 Log</button>
+      <button class="app-tab" onclick="showTab('journey')" id="tab-journey">🗺 Journey</button>
+      <button class="app-tab" onclick="showTab('brain')" id="tab-brain">🧠 Brain</button>
+      <button class="app-tab" onclick="showTab('cothinkers')" id="tab-cothinkers">🤝 Together</button>
+    </div>
+  </div>
+
+  <div class="app-content">
+
+    <!-- ── LOG ── -->
+    <div id="tab-content-log">
+      <div class="greeting-line" id="log-greeting-label">Good morning</div>
+      <div class="greeting-name" id="log-greeting-name">Captain ⛵</div>
+      <div class="streak-line" id="log-streak">Start your first entry today.</div>
+
+      <div class="wake-card">
+        <div class="wake-header">
+          <div class="wake-title">Your Wake — 6 skills</div>
+          <div class="wake-link" onclick="showTab('brain')">See all →</div>
+        </div>
+        <div id="skill-bars"></div>
+      </div>
+
+      <div class="compass-card">
+        <div class="compass-icon">🧭</div>
+        <div>
+          <div class="compass-label">Today's Compass<span id="journey-tag-label" style="color:#9CA3AF;margin-left:6px;font-weight:400"></span></div>
+          <div class="compass-q" id="compass-text">What do you believe that almost nobody else believes?</div>
+        </div>
+      </div>
+
+      <div class="mode-tabs">
+        <button class="mode-tab-btn on" id="mtab-quill" onclick="setMode('quill')">✍️ Quill</button>
+        <button class="mode-tab-btn" id="mtab-tide" onclick="setMode('tide')">🎙 Tide</button>
+        <button class="mode-tab-btn" id="mtab-chart" onclick="setMode('chart')">🖌 Chart</button>
+        <button class="mode-tab-btn" id="mtab-gust" onclick="setMode('gust')">⚡ Gust</button>
+      </div>
+
+      <div id="mode-quill">
+        <div class="entry-area">
+          <textarea id="quill-text" class="entry-textarea" placeholder="Just start. Any thought, any language, any length." oninput="wc(this,'quill-wc');autoH(this)"></textarea>
+          <div class="entry-footer">
+            <span class="entry-wc" id="quill-wc">0 words</span>
+            <button class="submit-btn" onclick="submitEntry('quill')">Submit thought →</button>
           </div>
-          <select onchange="penSize=parseInt(this.value)" class="ml-auto text-xs text-gray-500 border border-black/10 rounded px-1 py-0.5 bg-white">
-            <option value="2">Thin</option><option value="4" selected>Medium</option><option value="8">Thick</option>
-          </select>
-          <button onclick="clearCanvas()" class="text-xs text-gray-400 hover:text-gray-600">Clear</button>
         </div>
-        <canvas id="draw-canvas" class="w-full block cursor-crosshair" height="180" style="touch-action:none;background:#fafaf8"></canvas>
-        <input id="chart-caption" type="text" placeholder="Describe your drawing in one sentence..." class="w-full p-3 text-sm border-t border-black/5 outline-none text-gray-700 bg-white">
-        <div class="px-4 py-2.5 border-t border-black/5 text-right">
-          <button onclick="submitEntry('chart')" class="bg-ocean text-white text-xs font-semibold px-4 py-1.5 rounded-full hover:opacity-80">Submit thought →</button>
+      </div>
+
+      <div id="mode-tide" style="display:none">
+        <div class="entry-area">
+          <div class="tide-center">
+            <button class="mic-btn" id="mic-btn" onclick="toggleVoice()">🎙</button>
+            <div class="mic-status" id="mic-status">Tap to speak. Tide is listening.</div>
+            <textarea id="tide-text" class="tide-transcript" placeholder="Your words appear here..."></textarea>
+          </div>
+          <div class="entry-footer">
+            <span class="entry-wc"></span>
+            <button class="submit-btn" onclick="submitEntry('tide')">Submit thought →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="mode-chart" style="display:none">
+        <div class="entry-area">
+          <div class="chart-toolbar">
+            <span style="font-size:11px;color:var(--muted)">Pen:</span>
+            <div id="pen-palette" style="display:flex;gap:6px">
+              <div class="pen-dot" style="background:#0A1628;outline:2px solid #0A1628;outline-offset:2px" onclick="setPen('#0A1628',this)"></div>
+              <div class="pen-dot" style="background:#63B3ED" onclick="setPen('#63B3ED',this)"></div>
+              <div class="pen-dot" style="background:#DC2626" onclick="setPen('#DC2626',this)"></div>
+              <div class="pen-dot" style="background:#16A34A" onclick="setPen('#16A34A',this)"></div>
+              <div class="pen-dot" style="background:#D97706" onclick="setPen('#D97706',this)"></div>
+            </div>
+            <select id="pen-size" onchange="penSz=parseInt(this.value)" style="margin-left:auto;font-size:11px;border:0.5px solid var(--border);border-radius:6px;padding:3px 6px;background:white;outline:none">
+              <option value="2">Thin</option><option value="4" selected>Med</option><option value="9">Thick</option>
+            </select>
+            <button onclick="clearCanvas()" style="font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer">Clear</button>
+          </div>
+          <canvas id="draw-canvas" class="draw-canvas" height="190" style="touch-action:none"></canvas>
+          <input id="chart-caption" class="chart-caption" type="text" placeholder="Describe your drawing in one sentence...">
+          <div class="entry-footer">
+            <span class="entry-wc"></span>
+            <button class="submit-btn" onclick="submitEntry('chart')">Submit thought →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="mode-gust" style="display:none">
+        <div class="entry-area">
+          <div class="gust-list" id="gust-list"></div>
+          <div class="entry-footer">
+            <span class="entry-wc" style="font-size:11px;color:var(--muted)">Answer fast — first thought wins</span>
+            <button class="submit-btn" onclick="submitEntry('gust')">Submit Gust →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="wind-response-area"></div>
+    </div>
+
+    <!-- ── JOURNEY ── -->
+    <div id="tab-content-journey" style="display:none">
+      <div class="journey-header">
+        <div class="journey-h">Your Journey</div>
+        <div class="journey-sub">Pick one. Your Log entries tag to it automatically.</div>
+      </div>
+
+      <div id="active-journey-display"></div>
+
+      <div class="cat-section">
+        <div class="cat-title">🧠 Knowing</div>
+        <div class="journey-grid">
+          <div class="journey-item" onclick="setJourney('Learning Journey','Acquire a skill or discipline','🎓','Knowing')">
+            <div class="ji-icon">🎓</div>
+            <div class="ji-name">Learning Journey</div>
+            <div class="ji-hook">Acquire a skill or discipline</div>
+          </div>
+          <div class="journey-item" onclick="setJourney('Research Journey','Go deep on a specific question','🔬','Knowing')">
+            <div class="ji-icon">🔬</div>
+            <div class="ji-name">Research Journey</div>
+            <div class="ji-hook">Go deep on a specific question</div>
+          </div>
+          <div class="journey-item" onclick="setJourney('Understanding Journey','Grasp a concept or system','💡','Knowing')">
+            <div class="ji-icon">💡</div>
+            <div class="ji-name">Understanding Journey</div>
+            <div class="ji-hook">Grasp a concept or system</div>
+          </div>
+          <div class="journey-item" onclick="setJourney('Unlearning Journey','Dismantle a wrong mental model','🔄','Knowing')">
+            <div class="ji-icon">🔄</div>
+            <div class="ji-name">Unlearning Journey</div>
+            <div class="ji-hook">Dismantle a wrong mental model</div>
+          </div>
+        </div>
+      </div>
+      <div class="cat-section">
+        <div class="cat-title">🌱 Becoming</div>
+        <div class="journey-grid">
+          <div class="journey-item" onclick="setJourney('Identity Journey','Redefining who you are','🪞','Becoming')">
+            <div class="ji-icon">🪞</div>
+            <div class="ji-name">Identity Journey</div>
+            <div class="ji-hook">Redefining who you are</div>
+          </div>
+          <div class="journey-item" onclick="setJourney('Reputation Journey','Building public credibility','⭐','Becoming')">
+            <div class="ji-icon">⭐</div>
+            <div class="ji-name">Reputation Journey</div>
+            <div class="ji-hook">Building public credibility</div>
+          </div>
+          <div class="journey-item" onclick="setJourney('Mastery Journey','From competent to excellent','🏆','Becoming')">
+            <div class="ji-icon">🏆</div>
+            <div class="ji-name">Mastery Journey</div>
+            <div class="ji-hook">From competent to excellent</div>
+          </div>
+          <div class="journey-item" onclick="setJourney('Spiritual Journey','Deepening practice or belief','🕌','Becoming')">
+            <div class="ji-icon">🕌</div>
+            <div class="ji-name">Spiritual Journey</div>
+            <div class="ji-hook">Deepening practice or belief</div>
+          </div>
+        </div>
+      </div>
+      <div class="cat-section">
+        <div class="cat-title">🏗 Building</div>
+        <div class="journey-grid">
+          <div class="journey-item" onclick="setJourney('Business Building Journey','0 to 1 to scale','🚀','Building')">
+            <div class="ji-icon">🚀</div>
+            <div class="ji-name">Business Building</div>
+            <div class="ji-hook">0 to 1 to scale</div>
+          </div>
+          <div class="journey-item" onclick="setJourney('Product Journey','From idea to shipped product','📦','Building')">
+            <div class="ji-icon">📦</div>
+            <div class="ji-name">Product Journey</div>
+            <div class="ji-hook">From idea to shipped product</div>
+          </div>
+          <div class="journey-item" onclick="setJourney('Creative Journey','Completing a body of work','🎨','Building')">
+            <div class="ji-icon">🎨</div>
+            <div class="ji-name">Creative Journey</div>
+            <div class="ji-hook">Completing a body of work</div>
+          </div>
+          <div class="journey-item" onclick="setJourney('Brand Journey','From unknown to recognized','📣','Building')">
+            <div class="ji-icon">📣</div>
+            <div class="ji-name">Brand Journey</div>
+            <div class="ji-hook">From unknown to recognized</div>
+          </div>
+        </div>
+      </div>
+      <div class="cat-section">
+        <div class="cat-title">🧭 Navigating</div>
+        <div class="journey-grid">
+          <div class="journey-item" onclick="setJourney('Expat Journey','Building a full life abroad','✈️','Navigating')">
+            <div class="ji-icon">✈️</div>
+            <div class="ji-name">Expat Journey</div>
+            <div class="ji-hook">Building a full life abroad</div>
+          </div>
+          <div class="journey-item" onclick="setJourney('Life Stage Journey','Major life transition','🌅','Navigating')">
+            <div class="ji-icon">🌅</div>
+            <div class="ji-name">Life Stage Journey</div>
+            <div class="ji-hook">Navigating a major transition</div>
+          </div>
+          <div class="journey-item" onclick="setJourney('Immigration Journey','Moving to a new country','🗺','Navigating')">
+            <div class="ji-icon">🗺</div>
+            <div class="ji-name">Immigration Journey</div>
+            <div class="ji-hook">Moving to a new country</div>
+          </div>
+          <div class="journey-item" onclick="setJourney('Career Transition Journey','From one profession to another','💼','Navigating')">
+            <div class="ji-icon">💼</div>
+            <div class="ji-name">Career Transition</div>
+            <div class="ji-hook">From one profession to another</div>
+          </div>
+        </div>
+      </div>
+      <div class="cat-section">
+        <div class="cat-title">💚 Healing · Launching · Preserving</div>
+        <div class="journey-grid">
+          <div class="journey-item" onclick="setJourney('Health Recovery Journey','Recovering from illness or burnout','🌿','Healing')">
+            <div class="ji-icon">🌿</div>
+            <div class="ji-name">Health Recovery</div>
+            <div class="ji-hook">Recovering from illness or burnout</div>
+          </div>
+          <div class="journey-item" onclick="setJourney('Personal Launch Journey','Going public with a new identity','🌟','Launching')">
+            <div class="ji-icon">🌟</div>
+            <div class="ji-name">Personal Launch</div>
+            <div class="ji-hook">Going public with a new identity</div>
+          </div>
+          <div class="journey-item" onclick="setJourney('Legacy Journey','Ensuring what you built outlasts you','🏛','Preserving')">
+            <div class="ji-icon">🏛</div>
+            <div class="ji-name">Legacy Journey</div>
+            <div class="ji-hook">What you built outlasts you</div>
+          </div>
+          <div class="journey-item" onclick="setJourney('Knowledge Preservation Journey','Documenting knowledge for the future','📚','Preserving')">
+            <div class="ji-icon">📚</div>
+            <div class="ji-name">Knowledge Preservation</div>
+            <div class="ji-hook">Documenting knowledge for the future</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- GUST -->
-    <div id="lmode-gust" class="lmode-panel hidden">
-      <div class="bg-white border border-black/6 rounded-xl p-4 mb-3">
-        <p class="text-xs text-gray-400 mb-3">Answer fast — first thought wins.</p>
-        <div class="space-y-3" id="gust-questions"></div>
-        <button onclick="submitEntry('gust')" class="mt-4 w-full bg-ocean text-white text-sm font-semibold py-2.5 rounded-lg hover:opacity-80">Submit Gust →</button>
+    <!-- ── BRAIN ── -->
+    <div id="tab-content-brain" style="display:none">
+      <div class="brain-header">
+        <div class="brain-h">🧠 Second Brain</div>
       </div>
-    </div>
-
-    <!-- RESPONSE BOX -->
-    <div id="response-box" class="hidden fade-in"></div>
-
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     SCREEN: GUARDIAN
-══════════════════════════════════════════════ -->
-<div id="screen-guardian" class="hidden min-h-screen">
-  <nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-white/92 backdrop-blur-md border-b border-black/5">
-    <button onclick="showScreen('role')" class="font-lora text-lg font-semibold text-ocean">Ve<span class="text-sail">la</span> <span class="text-xs font-normal text-gray-400 ml-1">Guardian</span></button>
-    <div class="flex items-center gap-2">
-      <span class="text-xs text-green-600 font-medium bg-green-50 px-2 py-1 rounded-full">🛡 Guardian mode</span>
-    </div>
-  </nav>
-  <div class="max-w-xl mx-auto px-4 pt-20 pb-10">
-    <div class="mb-5">
-      <h2 class="font-lora text-2xl font-semibold text-ocean mb-1">Guardian Review</h2>
-      <p class="text-sm text-gray-400">Review your learner's entries. Respond personally or pass to Wind.</p>
-    </div>
-
-    <!-- pending entries -->
-    <div class="mb-4">
-      <div class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Pending review</div>
-      <div id="guardian-pending"></div>
-    </div>
-
-    <!-- reviewed -->
-    <div>
-      <div class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Reviewed</div>
-      <div id="guardian-reviewed"></div>
-    </div>
-
-    <!-- guardian settings -->
-    <div class="mt-8 bg-white border border-black/6 rounded-xl p-4">
-      <div class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Guardian settings</div>
-      <div class="space-y-3">
-        <div>
-          <label class="text-xs text-gray-500 block mb-1">Your name (shown to learner)</label>
-          <input id="guardian-name" type="text" placeholder="e.g. Dad, Ms. Sarah" class="w-full text-sm border border-black/10 rounded-lg px-3 py-2 outline-none focus:border-sail bg-gray-50">
-        </div>
-        <div>
-          <label class="text-xs text-gray-500 block mb-1">Claude API key (for when you approve Wind)</label>
-          <input id="guardian-api-key" type="password" placeholder="sk-ant-..." class="w-full text-sm border border-black/10 rounded-lg px-3 py-2 outline-none font-mono bg-gray-50">
-        </div>
-        <div>
-          <label class="text-xs text-gray-500 block mb-1">Default action for new entries</label>
-          <select id="guardian-default" class="w-full text-sm border border-black/10 rounded-lg px-3 py-2 outline-none bg-gray-50">
-            <option value="review">Always review first (recommended)</option>
-            <option value="auto-wind">Auto-pass to Wind</option>
-            <option value="manual-only">Manual responses only (no AI)</option>
-          </select>
-        </div>
-        <button onclick="saveGuardianSettings()" class="w-full bg-ocean text-white text-sm font-semibold py-2.5 rounded-lg hover:opacity-80">Save settings</button>
+      <input class="brain-search" type="text" placeholder="Search your thoughts..." id="brain-search-input" oninput="filterBrain(this.value)">
+      <div class="brain-filters">
+        <button class="brain-filter on" onclick="setBrainFilter('all',this)">All</button>
+        <button class="brain-filter" onclick="setBrainFilter('quill',this)">✍️ Quill</button>
+        <button class="brain-filter" onclick="setBrainFilter('tide',this)">🎙 Tide</button>
+        <button class="brain-filter" onclick="setBrainFilter('chart',this)">🖌 Chart</button>
+        <button class="brain-filter" onclick="setBrainFilter('gust',this)">⚡ Gust</button>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     SCREEN: INSTRUCTOR
-══════════════════════════════════════════════ -->
-<div id="screen-instructor" class="hidden min-h-screen">
-  <nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-white/92 backdrop-blur-md border-b border-black/5">
-    <button onclick="showScreen('role')" class="font-lora text-lg font-semibold text-ocean">Ve<span class="text-sail">la</span> <span class="text-xs font-normal text-gray-400 ml-1">Instructor</span></button>
-    <span class="text-xs text-purple-600 font-medium bg-purple-50 px-2 py-1 rounded-full">📚 Instructor mode</span>
-  </nav>
-  <div class="max-w-xl mx-auto px-4 pt-20 pb-10">
-    <div class="mb-5">
-      <h2 class="font-lora text-2xl font-semibold text-ocean mb-1">Craft the journey</h2>
-      <p class="text-sm text-gray-400">Set frameworks, Compass prompts, and Gust question packs.</p>
+      <div id="brain-list"></div>
     </div>
 
-    <!-- compass editor -->
-    <div class="bg-white border border-black/6 rounded-xl p-4 mb-4">
-      <div class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">🧭 Set today's Compass</div>
-      <textarea id="instructor-compass" rows="2" placeholder="What question should learners think about today?" class="w-full text-sm border border-black/10 rounded-lg px-3 py-2.5 outline-none resize-none bg-gray-50 mb-2"></textarea>
-      <button onclick="setCompass()" class="bg-ocean text-white text-xs font-semibold px-4 py-1.5 rounded-full hover:opacity-80">Set Compass for all learners</button>
-    </div>
-
-    <!-- gust pack editor -->
-    <div class="bg-white border border-black/6 rounded-xl p-4 mb-4">
-      <div class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">⚡ Gust question pack</div>
-      <div id="gust-editor" class="space-y-2 mb-3"></div>
-      <button onclick="addGustQ()" class="text-xs text-sail border border-sail/30 px-3 py-1.5 rounded-full hover:bg-sail/5 mb-3">+ Add question</button>
-      <button onclick="saveGustPack()" class="w-full bg-ocean text-white text-sm font-semibold py-2.5 rounded-lg hover:opacity-80">Save Gust pack</button>
-    </div>
-
-    <!-- framework editor -->
-    <div class="bg-white border border-black/6 rounded-xl p-4 mb-4">
-      <div class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">🎓 Wind framework</div>
-      <div class="flex flex-wrap gap-2 mb-3" id="framework-selector">
-        <div class="framework-pill mode-pill active text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selFramework(this,'Oxford Tutorial')">Oxford Tutorial</div>
-        <div class="framework-pill mode-pill text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selFramework(this,'Harvard Case')">Harvard Case</div>
-        <div class="framework-pill mode-pill text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selFramework(this,'MIT Problem Set')">MIT Problem Set</div>
-        <div class="framework-pill mode-pill text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selFramework(this,'Stanford d.school')">Stanford d.school</div>
-        <div class="framework-pill mode-pill text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selFramework(this,'Socratic')">Socratic</div>
+    <!-- ── CO-THINKERS ── -->
+    <div id="tab-content-cothinkers" style="display:none">
+      <div class="co-header">
+        <div class="co-h">Think Out Loud. Together.</div>
+        <div class="co-sub">Your thinking circles — family, class, peers, team.</div>
       </div>
+
+      <div class="invite-card">
+        <div class="invite-icon">🤝</div>
+        <div class="invite-title">Start a thinking circle</div>
+        <div class="invite-sub">Invite anyone to think alongside you. They see only what you choose to share.</div>
+        <button class="invite-btn" onclick="showToast('Invite link copied to clipboard ✓')">Copy invite link</button>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Shared with your circle</div>
+        <div id="shared-entries-list">
+          <div style="text-align:center;padding:2rem 0;font-size:13px;color:#D1D5DB">No shared thoughts yet.<br>Submit an entry and tap "Share to circle" to begin.</div>
+        </div>
+      </div>
+
       <div>
-        <label class="text-xs text-gray-500 block mb-1">Custom Wind instructions for your learners</label>
-        <textarea id="instructor-wind" rows="3" placeholder="e.g. Always end with a reading recommendation. Focus on IGCSE essay structure for this class." class="w-full text-sm border border-black/10 rounded-lg px-3 py-2.5 outline-none resize-none bg-gray-50"></textarea>
-      </div>
-      <button onclick="saveInstructorSettings()" class="mt-3 w-full bg-ocean text-white text-sm font-semibold py-2.5 rounded-lg hover:opacity-80">Save framework settings</button>
-    </div>
-
-    <!-- entries review -->
-    <div class="bg-white border border-black/6 rounded-xl p-4">
-      <div class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">📋 All learner entries</div>
-      <div id="instructor-entries"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     SCREEN: EXPERT (Writer / Speaker)
-══════════════════════════════════════════════ -->
-<div id="screen-expert" class="hidden min-h-screen">
-  <nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-white/92 backdrop-blur-md border-b border-black/5">
-    <button onclick="showScreen('role')" class="font-lora text-lg font-semibold text-ocean">Ve<span class="text-sail">la</span> <span class="text-xs font-normal text-gray-400 ml-1" id="expert-role-label">Expert</span></button>
-    <span class="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded-full" id="expert-badge-label">✍️ Writing Expert</span>
-  </nav>
-  <div class="max-w-xl mx-auto px-4 pt-20 pb-10">
-    <div class="mb-5">
-      <h2 class="font-lora text-2xl font-semibold text-ocean mb-1" id="expert-title">Writing Expert</h2>
-      <p class="text-sm text-gray-400" id="expert-sub">Review writing entries, give craft feedback, publish prompt packs.</p>
-    </div>
-
-    <!-- entries to review -->
-    <div class="mb-4">
-      <div class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Entries awaiting expert feedback</div>
-      <div id="expert-entries"></div>
-    </div>
-
-    <!-- publish prompt pack -->
-    <div class="bg-white border border-black/6 rounded-xl p-4">
-      <div class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">📦 Publish a prompt pack</div>
-      <input type="text" id="pack-name" placeholder="Pack name e.g. 'Persuasive writing starters'" class="w-full text-sm border border-black/10 rounded-lg px-3 py-2 outline-none bg-gray-50 mb-2">
-      <div id="pack-prompts" class="space-y-2 mb-2"></div>
-      <button onclick="addPackPrompt()" class="text-xs text-sail border border-sail/30 px-3 py-1.5 rounded-full hover:bg-sail/5 mb-3">+ Add prompt</button>
-      <button onclick="publishPack()" class="w-full bg-ocean text-white text-sm font-semibold py-2.5 rounded-lg hover:opacity-80">Publish pack</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     PANEL: SECOND BRAIN
-══════════════════════════════════════════════ -->
-<div id="panel-second-brain" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center px-3 pb-3">
-  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closePanel('second-brain')"></div>
-  <div class="relative bg-white rounded-2xl w-full max-w-lg max-h-screen overflow-hidden shadow-2xl fade-in flex flex-col">
-    <div class="bg-ocean px-5 py-4 flex justify-between items-center flex-shrink-0">
-      <div>
-        <div class="font-semibold text-white text-lg">🧠 Your Second Brain</div>
-        <div class="text-xs text-white/40 mt-0.5">Every thought you've ever captured in Vela</div>
-      </div>
-      <button onclick="closePanel('second-brain')" class="text-white/40 hover:text-white text-2xl leading-none">×</button>
-    </div>
-
-    <!-- skill summary -->
-    <div class="px-5 py-4 border-b border-black/5 flex-shrink-0">
-      <div class="grid grid-cols-3 gap-2" id="brain-skill-summary"></div>
-    </div>
-
-    <!-- search -->
-    <div class="px-5 py-3 border-b border-black/5 flex-shrink-0">
-      <input type="text" id="brain-search" placeholder="Search your thoughts..." class="w-full text-sm border border-black/10 rounded-lg px-3 py-2 outline-none bg-gray-50" oninput="filterBrain(this.value)">
-    </div>
-
-    <!-- filter tabs -->
-    <div class="flex gap-2 px-5 py-2 border-b border-black/5 overflow-x-auto flex-shrink-0">
-      <button onclick="filterBrainMode('all')" class="brain-filter text-xs px-3 py-1 rounded-full bg-ocean text-white whitespace-nowrap">All</button>
-      <button onclick="filterBrainMode('quill')" class="brain-filter text-xs px-3 py-1 rounded-full border border-black/10 text-gray-500 whitespace-nowrap">✍️ Quill</button>
-      <button onclick="filterBrainMode('tide')" class="brain-filter text-xs px-3 py-1 rounded-full border border-black/10 text-gray-500 whitespace-nowrap">🎙 Tide</button>
-      <button onclick="filterBrainMode('chart')" class="brain-filter text-xs px-3 py-1 rounded-full border border-black/10 text-gray-500 whitespace-nowrap">🖌 Chart</button>
-      <button onclick="filterBrainMode('gust')" class="brain-filter text-xs px-3 py-1 rounded-full border border-black/10 text-gray-500 whitespace-nowrap">⚡ Gust</button>
-    </div>
-
-    <!-- entries list -->
-    <div class="overflow-y-auto flex-1 px-5 py-3" id="brain-entries-list">
-      <p class="text-sm text-gray-400 text-center py-8">No entries yet. Open your Log and start thinking.</p>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     PANEL: LEARNER SETTINGS
-══════════════════════════════════════════════ -->
-<div id="panel-learner-settings" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center px-3 pb-3">
-  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closePanel('learner-settings')"></div>
-  <div class="relative bg-white rounded-2xl w-full max-w-lg max-h-screen overflow-y-auto shadow-2xl fade-in">
-    <div class="sticky top-0 bg-white border-b border-black/5 px-5 py-4 flex justify-between items-center rounded-t-2xl">
-      <div class="font-semibold text-ocean">⚙ Settings</div>
-      <button onclick="closePanel('learner-settings')" class="text-gray-400 hover:text-gray-600 text-xl">×</button>
-    </div>
-    <div class="p-5 space-y-5">
-      <div>
-        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Your name</div>
-        <input id="learner-name" type="text" placeholder="What should Vela call you?" class="w-full text-sm border border-black/10 rounded-lg px-3 py-2.5 outline-none bg-gray-50">
-      </div>
-      <div>
-        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Your age</div>
-        <div class="flex gap-2 flex-wrap" id="age-pills">
-          <div class="age-pill mode-pill text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selAge(this,'7-10')">7–10</div>
-          <div class="age-pill mode-pill text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selAge(this,'11-13')">11–13</div>
-          <div class="age-pill mode-pill active text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selAge(this,'14-16')">14–16</div>
-          <div class="age-pill mode-pill text-xs px-3 py-1.5 rounded-full border border-black/10 bg-white text-gray-600" onclick="selAge(this,'17-18')">17–18</div>
+        <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Your circle's thinking</div>
+        <div class="cothinker-card">
+          <div class="cc-top">
+            <div class="cc-avatar" style="background:#EFF6FF">👨</div>
+            <div>
+              <div class="cc-name">Dad</div>
+              <div class="cc-role">Guardian · shared 2 thoughts today</div>
+            </div>
+          </div>
+          <div class="cc-entry">"The most valuable skill in the next decade won't be knowing things — it'll be knowing what questions to ask. AI has the answers. Humans must have the questions."</div>
+          <div class="cc-actions">
+            <button class="cc-act" onclick="showToast('Response sent ✓')">Respond in writing</button>
+            <button class="cc-act" onclick="showToast('Voice response recorded ✓')">🎙 Voice reply</button>
+            <button class="cc-act primary" onclick="showToast('Added to your Brain ✓')">Save to Brain</button>
+          </div>
+        </div>
+        <div class="cothinker-card">
+          <div class="cc-top">
+            <div class="cc-avatar" style="background:#F5F3FF">👩‍🏫</div>
+            <div>
+              <div class="cc-name">Ms. Noor</div>
+              <div class="cc-role">Instructor · set new Compass</div>
+            </div>
+          </div>
+          <div class="cc-entry" style="background:#F5F3FF">"New Compass for this week: What would you change about how your city works — and what would be the unintended consequence of that change?"</div>
+          <div class="cc-actions">
+            <button class="cc-act primary" onclick="setCompassFromCircle('What would you change about how your city works — and what would be the unintended consequence of that change?')">Use this Compass</button>
+          </div>
         </div>
       </div>
-      <div>
-        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Claude API key (optional)</div>
-        <div class="text-xs text-gray-400 mb-2">Only needed if your guardian hasn't set one. Free at console.anthropic.com</div>
-        <input id="learner-api-key" type="password" placeholder="sk-ant-..." class="w-full text-sm border border-black/10 rounded-lg px-3 py-2.5 outline-none font-mono bg-gray-50">
-      </div>
-      <button onclick="saveLearnerSettings()" class="w-full bg-ocean text-white font-semibold py-3 rounded-xl hover:opacity-80">Save</button>
     </div>
+
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     PANEL: GUARDIAN ENTRY REVIEW
-══════════════════════════════════════════════ -->
-<div id="panel-review-entry" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center px-3 pb-3">
-  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closePanel('review-entry')"></div>
-  <div class="relative bg-white rounded-2xl w-full max-w-lg max-h-screen overflow-y-auto shadow-2xl fade-in">
-    <div class="sticky top-0 bg-white border-b border-black/5 px-5 py-4 flex justify-between items-center rounded-t-2xl">
-      <div class="font-semibold text-ocean">Review entry</div>
-      <button onclick="closePanel('review-entry')" class="text-gray-400 hover:text-gray-600 text-xl">×</button>
+<!-- ════════════════════════════
+     SETTINGS PANEL
+════════════════════════════ -->
+<div class="panel-overlay hidden" id="settings-panel" onclick="closePanelIfOutside(event)">
+  <div class="panel-box">
+    <div class="panel-header">
+      <div class="panel-title">⚙ Wind settings</div>
+      <button class="panel-close" onclick="closePanel()">×</button>
     </div>
-    <div class="p-5" id="review-entry-content"></div>
+    <div class="panel-body">
+      <div class="panel-label">Your name</div>
+      <input class="panel-input" id="s-name" type="text" placeholder="What should Vela call you?">
+
+      <div class="panel-label">Your age</div>
+      <div class="panel-pills" id="age-pills">
+        <button class="panel-pill" onclick="selPill(this,'age','7-10')">7–10</button>
+        <button class="panel-pill" onclick="selPill(this,'age','11-13')">11–13</button>
+        <button class="panel-pill on" onclick="selPill(this,'age','14-16')">14–16</button>
+        <button class="panel-pill" onclick="selPill(this,'age','17-18')">17–18</button>
+        <button class="panel-pill" onclick="selPill(this,'age','adult')">Adult</button>
+      </div>
+
+      <div class="panel-label">Elite framework</div>
+      <div class="panel-pills" id="fw-pills">
+        <button class="panel-pill on" onclick="selPill(this,'fw','Oxford Tutorial')">Oxford Tutorial</button>
+        <button class="panel-pill" onclick="selPill(this,'fw','Harvard Case')">Harvard Case</button>
+        <button class="panel-pill" onclick="selPill(this,'fw','MIT Problem Set')">MIT Problem Set</button>
+        <button class="panel-pill" onclick="selPill(this,'fw','Stanford d.school')">Stanford d.school</button>
+        <button class="panel-pill" onclick="selPill(this,'fw','Socratic')">Socratic</button>
+        <button class="panel-pill" onclick="selPill(this,'fw','Cambridge')">Cambridge</button>
+      </div>
+
+      <div class="panel-label">What outcome do you want from Wind?</div>
+      <div class="panel-pills" id="outcome-pills">
+        <button class="panel-pill on" onclick="selPill(this,'outcome','deepen')">🧠 Deepen thinking</button>
+        <button class="panel-pill" onclick="selPill(this,'outcome','write')">✍️ Better writer</button>
+        <button class="panel-pill" onclick="selPill(this,'outcome','distil')">🎯 Distil</button>
+        <button class="panel-pill" onclick="selPill(this,'outcome','college')">🎓 College prep</button>
+        <button class="panel-pill" onclick="selPill(this,'outcome','speak')">🎙 Speaker</button>
+        <button class="panel-pill" onclick="selPill(this,'outcome','create')">💡 Create something</button>
+      </div>
+
+      <div class="panel-label">Claude API key</div>
+      <input class="panel-input" id="s-apikey" type="password" placeholder="sk-ant-api03-..." style="font-family:monospace">
+      <div style="font-size:11px;color:#9CA3AF;margin-top:-10px;margin-bottom:14px">Free at console.anthropic.com — stored only in your browser</div>
+
+      <div class="panel-label">Custom Compass (optional)</div>
+      <input class="panel-input" id="s-compass" type="text" placeholder="Override today's question...">
+
+      <div class="panel-label">Extra Wind instructions (optional)</div>
+      <input class="panel-input" id="s-extra" type="text" placeholder="e.g. Always end with a book recommendation">
+
+      <button class="panel-save" onclick="saveSettings()">Save Wind settings</button>
+    </div>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════
-const SKILLS = [
-  {id:'writer',label:'Strategic Writer',color:'#3C3489',xpKey:'xp_writer'},
-  {id:'speaker',label:'Speaker',color:'#0F6E56',xpKey:'xp_speaker'},
-  {id:'articulator',label:'Articulator',color:'#993C1D',xpKey:'xp_articulator'},
-  {id:'artist',label:'Artist',color:'#854F0B',xpKey:'xp_artist'},
-  {id:'capturer',label:'Capturer',color:'#185FA5',xpKey:'xp_capturer'},
-  {id:'distiller',label:'Distiller',color:'#72243E',xpKey:'xp_distiller'}
+// ════════════ STATE ════════════
+const SKILLS=[
+  {id:'writer',label:'Strategic Writer',color:'#3C3489'},
+  {id:'speaker',label:'Speaker',color:'#0F6E56'},
+  {id:'articulator',label:'Articulator',color:'#993C1D'},
+  {id:'artist',label:'Artist',color:'#854F0B'},
+  {id:'capturer',label:'Capturer',color:'#185FA5'},
+  {id:'distiller',label:'Distiller',color:'#72243E'}
 ];
-
-const DEFAULT_GUST_QS = [
+const GUST_DEFAULT=[
   'Right now I am thinking about...',
   'A question I cannot stop wondering...',
   'Something I disagree with almost everyone about...',
-  'An idea nobody knows I have...'
+  'An idea nobody knows I have yet...'
 ];
+let cfg={name:'',age:'14-16',fw:'Oxford Tutorial',outcome:'deepen',apiKey:'',compass:'',extra:'',gustQs:GUST_DEFAULT,activeJourney:null};
+let xp={writer:0,speaker:0,articulator:0,artist:0,capturer:0,distiller:0};
+let entries=[];
+let currentMode='quill',penColor='#0A1628',penSz=4,drawing=false,lx=0,ly=0;
+let rec=null,isRec=false,brainFilter={mode:'all',q:''};
+let lastEntry='',lastMode='quill';
 
-let cfg = {
-  learnerName:'', age:'14-16', learnerApiKey:'',
-  guardianName:'', guardianApiKey:'', guardianDefault:'review',
-  framework:'Oxford Tutorial', instructorWind:'', compass:'What do you believe that almost nobody else believes?',
-  gustQuestions: DEFAULT_GUST_QS
+// ════════════ BOOT ════════════
+window.onload=()=>{
+  const c=localStorage.getItem('vela4_cfg');if(c)cfg={...cfg,...JSON.parse(c)};
+  const x=localStorage.getItem('vela4_xp');if(x)xp={...xp,...JSON.parse(x)};
+  const e=localStorage.getItem('vela4_entries');if(e)entries=JSON.parse(e);
+  applySettings();renderSkillBars();renderBrain();renderGust();renderActiveJourney();
+  if(cfg.name) document.getElementById('log-greeting-name').textContent=cfg.name+' ⛵';
+  updateStreak();
 };
-let xp = {writer:0,speaker:0,articulator:0,artist:0,capturer:0,distiller:0};
-let entries = []; // {id,mode,content,time,status:'pending'|'reviewed'|'wind-done',guardianResponse,windResponse,role}
-let penColor='#0A1628', penSize=4, isDrawing=false, lastX=0, lastY=0;
-let recognition=null, isRecording=false;
-let currentLMode='quill', reviewingId=null, currentExpertRole='writer';
-let brainFilter={mode:'all',query:''};
-
-// ═══════════════════════════════════════
-// BOOT
-// ═══════════════════════════════════════
-window.onload = () => {
-  load();
-  renderGustQuestions();
-  renderGuardianPending();
-  renderGuardianReviewed();
-  renderInstructorEntries();
-  renderExpertEntries();
-  renderSkillBars();
-  renderBrainSkillSummary();
-  renderBrainEntries();
-  renderGustEditor();
-  updateStreakLine();
-  document.getElementById('learner-name').value = cfg.learnerName||'';
-  document.getElementById('learner-api-key').value = cfg.learnerApiKey||'';
-  document.getElementById('guardian-name').value = cfg.guardianName||'';
-  document.getElementById('guardian-api-key').value = cfg.guardianApiKey||'';
-  document.getElementById('instructor-wind').value = cfg.instructorWind||'';
-  document.getElementById('instructor-compass').value = cfg.compass||'';
-  document.getElementById('compass-display').textContent = cfg.compass||'What do you believe that almost nobody else believes?';
-  if(cfg.learnerName) document.getElementById('learner-greeting').textContent = `Hey ${cfg.learnerName} ⛵`;
-};
-
 function save(){
-  localStorage.setItem('vela_cfg',JSON.stringify(cfg));
-  localStorage.setItem('vela_xp',JSON.stringify(xp));
-  localStorage.setItem('vela_entries',JSON.stringify(entries));
+  localStorage.setItem('vela4_cfg',JSON.stringify(cfg));
+  localStorage.setItem('vela4_xp',JSON.stringify(xp));
+  localStorage.setItem('vela4_entries',JSON.stringify(entries));
 }
-function load(){
-  const c=localStorage.getItem('vela_cfg'); if(c) cfg={...cfg,...JSON.parse(c)};
-  const x=localStorage.getItem('vela_xp'); if(x) xp={...xp,...JSON.parse(x)};
-  const e=localStorage.getItem('vela_entries'); if(e) entries=JSON.parse(e);
+function applySettings(){
+  document.getElementById('s-name').value=cfg.name||'';
+  document.getElementById('s-apikey').value=cfg.apiKey||'';
+  document.getElementById('s-compass').value=cfg.compass||'';
+  document.getElementById('s-extra').value=cfg.extra||'';
+  if(cfg.compass) document.getElementById('compass-text').textContent=cfg.compass;
 }
 
-// ═══════════════════════════════════════
-// SCREENS & PANELS
-// ═══════════════════════════════════════
-function showScreen(name){
-  ['role','learner','guardian','instructor','expert'].forEach(s=>{
-    const el=document.getElementById('screen-'+s);
-    if(el) el.classList.toggle('hidden',s!==name);
+// ════════════ SCREENS ════════════
+function goto(screen){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+screen).classList.add('active');
+  window.scrollTo(0,0);
+}
+function enterRole(role){
+  goto('app');
+  if(role==='learner') showTab('log');
+  else if(role==='guardian'||role==='instructor') showTab('cothinkers');
+  else showTab('cothinkers');
+}
+
+// ════════════ TABS ════════════
+function showTab(tab){
+  ['log','journey','brain','cothinkers'].forEach(t=>{
+    document.getElementById('tab-content-'+t).style.display=t===tab?'':'none';
+    const el=document.getElementById('tab-'+t);
+    if(el){el.classList.toggle('active',t===tab);}
   });
-  if(name==='learner') setTimeout(()=>{setupCanvas();renderSkillBars();},80);
-  if(name==='guardian'){renderGuardianPending();renderGuardianReviewed();}
-  if(name==='instructor'){renderInstructorEntries();}
-  if(name==='expert') renderExpertEntries();
+  if(tab==='brain') renderBrain();
+  if(tab==='chart') setTimeout(setupCanvas,60);
 }
 
-function enterAs(role){
-  if(role==='learner') showScreen('learner');
-  else if(role==='guardian') showScreen('guardian');
-  else if(role==='instructor') showScreen('instructor');
-  else if(role==='expert-writer'){
-    currentExpertRole='writer';
-    document.getElementById('expert-role-label').textContent='Writing Expert';
-    document.getElementById('expert-badge-label').textContent='✍️ Writing Expert';
-    document.getElementById('expert-title').textContent='Writing Expert';
-    document.getElementById('expert-sub').textContent='Review writing entries, give craft feedback, publish prompt packs.';
-    showScreen('expert'); renderExpertEntries();
-  } else if(role==='expert-speaker'){
-    currentExpertRole='speaker';
-    document.getElementById('expert-role-label').textContent='Speaking Expert';
-    document.getElementById('expert-badge-label').textContent='🎙 Speaking Expert';
-    document.getElementById('expert-title').textContent='Speaking Expert';
-    document.getElementById('expert-sub').textContent='Review voice entries, coach rhetoric and delivery.';
-    showScreen('expert'); renderExpertEntries();
-  }
-}
-
-function showPanel(name){
-  closeAllPanels();
-  const el=document.getElementById('panel-'+name);
-  if(el){el.classList.remove('hidden'); renderBrainEntries();}
-}
-function closePanel(name){
-  const el=document.getElementById('panel-'+name);
-  if(el) el.classList.add('hidden');
-}
-function closeAllPanels(){
-  document.querySelectorAll('[id^="panel-"]').forEach(p=>p.classList.add('hidden'));
-}
-
-// ═══════════════════════════════════════
-// LEARNER — MODES
-// ═══════════════════════════════════════
-function setLearnerMode(mode){
-  currentLMode=mode;
-  document.querySelectorAll('.lmode-panel').forEach(p=>p.classList.add('hidden'));
-  document.querySelectorAll('[id^="ltab-"]').forEach(b=>{
-    b.className='mode-tab flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap border border-black/10 bg-white text-gray-500';
+// ════════════ MODES ════════════
+function setMode(m){
+  currentMode=m;
+  ['quill','tide','chart','gust'].forEach(x=>{
+    document.getElementById('mode-'+x).style.display=x===m?'':'none';
+    document.getElementById('mtab-'+x).classList.toggle('on',x===m);
   });
-  document.getElementById('lmode-'+mode).classList.remove('hidden');
-  const tab=document.getElementById('ltab-'+mode);
-  tab.classList.remove('border-black/10','bg-white','text-gray-500');
-  tab.classList.add('tab-active','border-transparent');
-  document.getElementById('response-box').classList.add('hidden');
-  if(mode==='chart') setTimeout(setupCanvas,50);
+  document.getElementById('wind-response-area').innerHTML='';
+  if(m==='chart') setTimeout(setupCanvas,60);
 }
-
-function countW(el,targetId){
+function wc(el,id){
   const w=el.value.trim().split(/\s+/).filter(Boolean).length;
-  const t=document.getElementById(targetId); if(t) t.textContent=w+' word'+(w===1?'':'s');
+  const t=document.getElementById(id);if(t)t.textContent=w+' word'+(w===1?'':'s');
 }
 function autoH(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
-
-function renderGustQuestions(){
-  const container=document.getElementById('gust-questions');
-  if(!container) return;
-  container.innerHTML=cfg.gustQuestions.map((q,i)=>`
-    <div>
-      <label class="text-xs font-medium text-gray-500 block mb-1">${q}</label>
-      <input type="text" class="gust-input w-full text-sm border-b border-black/10 pb-1 outline-none text-gray-800 bg-transparent" placeholder="answer">
-    </div>`).join('');
+function renderGust(){
+  const c=document.getElementById('gust-list');if(!c)return;
+  c.innerHTML=cfg.gustQs.map((q,i)=>`<div class="gust-q-item"><label>${q}</label><input type="text" class="gust-input" placeholder="first thought" id="gust-i-${i}"></div>`).join('');
 }
 
-// ═══════════════════════════════════════
-// SUBMIT ENTRY → GUARDIAN QUEUE
-// ═══════════════════════════════════════
+// ════════════ SUBMIT ════════════
 function submitEntry(mode){
-  const contentMap={
-    quill: document.getElementById('quill-text')?.value||'',
-    tide: document.getElementById('tide-text')?.value||'',
-    chart: document.getElementById('chart-caption')?.value||'Visual drawing',
-    gust: Array.from(document.querySelectorAll('.gust-input')).map((inp,i)=>{
-      const v=inp.value.trim(); return v?cfg.gustQuestions[i]+': '+v:'';
-    }).filter(Boolean).join(' | ')
+  const map={
+    quill:()=>document.getElementById('quill-text')?.value||'',
+    tide:()=>document.getElementById('tide-text')?.value||'',
+    chart:()=>document.getElementById('chart-caption')?.value||'Visual drawing',
+    gust:()=>cfg.gustQs.map((q,i)=>{const v=document.getElementById('gust-i-'+i)?.value||'';return v?q+': '+v:'';}).filter(Boolean).join(' | ')
   };
-  const content=contentMap[mode]||'';
-  if(!content.trim()||content.trim().length<3){
-    showResponse('⚠ Add a thought first — even one sentence is enough.','error');return;
-  }
-
-  const entry={
-    id:Date.now(),mode,content,
-    time:new Date().toLocaleString(),
-    status: cfg.guardianDefault==='auto-wind'?'wind-pending':
-            cfg.guardianDefault==='manual-only'?'pending':'pending',
-    guardianResponse:null, windResponse:null,
-    learnerName:cfg.learnerName||'Learner'
-  };
-  entries.unshift(entry);
-  gainXP(mode);
-  save();
-  updateStreakLine();
-
-  if(cfg.guardianDefault==='auto-wind'){
-    showResponse('⛵ Your thought is sailing to Wind...','loading');
-    callWind(entry.id, content, mode);
-  } else if(cfg.guardianDefault==='manual-only'){
-    showResponse('📬 Your thought has been sent to your guardian for review.','sent');
-  } else {
-    showResponse('📬 Submitted! Your guardian will review it and respond.','sent');
-  }
-
-  // clear inputs
-  if(mode==='quill'){const t=document.getElementById('quill-text');if(t){t.value='';t.style.height='auto';}}
-  if(mode==='tide'){const t=document.getElementById('tide-text');if(t) t.value='';}
-  if(mode==='chart'){const t=document.getElementById('chart-caption');if(t) t.value='';clearCanvas();}
+  const content=map[mode]?map[mode]():'';
+  if(!content.trim()||content.trim().length<3){showToast('Add a thought first ✍️');return;}
+  lastEntry=content;lastMode=mode;
+  const entry={id:Date.now(),mode,content,time:new Date().toLocaleString(),windResponse:null,journey:cfg.activeJourney?.name||null,shared:false};
+  entries.unshift(entry);gainXP(mode);save();updateStreak();
+  clearInputs(mode);
+  if(!cfg.apiKey){showWindBox('To connect Wind, tap ⚙ Wind above and add your Claude API key (free at console.anthropic.com).','error',entry.id);return;}
+  callWind(entry.id,content,mode);
+}
+function clearInputs(mode){
+  if(mode==='quill'){const t=document.getElementById('quill-text');if(t){t.value='';t.style.height='auto';document.getElementById('quill-wc').textContent='0 words';}}
+  if(mode==='tide'){const t=document.getElementById('tide-text');if(t)t.value='';}
+  if(mode==='chart'){const t=document.getElementById('chart-caption');if(t)t.value='';clearCanvas();}
   document.querySelectorAll('.gust-input').forEach(i=>i.value='');
 }
 
-function showResponse(msg, type){
-  const box=document.getElementById('response-box');
-  box.classList.remove('hidden');
-  box.classList.add('fade-in');
-  const colors={
-    error:'border-red-200 bg-red-50',
-    loading:'border-blue-200 bg-blue-50',
-    sent:'border-green-200 bg-green-50',
-    wind:'border-black/10 bg-ocean text-white',
-    guardian:'border-green-300 bg-green-50'
+// ════════════ WIND ════════════
+function buildPrompt(mode){
+  const age={
+    '7-10':'Speak to a child aged 7–10. Simple warm words. Very encouraging.',
+    '11-13':'Coach a young thinker aged 11–13. Curious, encouraging, one new idea per response.',
+    '14-16':'Elite thinking coach for a 14–16 year old. Direct, precise. Treat as a future scholar.',
+    '17-18':'Coach a 17–18 year old preparing for elite universities. Rigorous and specific.',
+    'adult':'Coach an ambitious adult. Intellectually rigorous, respectful, no hand-holding.'
   };
-  const isWind=type==='wind', isGuardian=type==='guardian';
-  box.innerHTML=`
-    <div class="rounded-xl border p-4 ${colors[type]||colors.sent} ${isWind?'':''}">
-      ${isWind?`<div class="flex items-center gap-2 mb-2"><div class="wind-pulse w-2 h-2 rounded-full bg-sail"></div><span class="text-xs font-semibold text-sail uppercase tracking-wider">Wind · ${cfg.framework}</span></div>`:''}
-      ${isGuardian?`<div class="text-xs font-semibold text-green-600 mb-2">🛡 ${cfg.guardianName||'Your guardian'} responded:</div>`:''}
-      <div class="text-sm leading-relaxed font-lora ${isWind?'text-white/85':''}">${msg}</div>
-      ${isWind?`<div class="mt-3 pt-3 border-t border-white/10 flex gap-2 flex-wrap">
-        <button onclick="convertThought('essay')" class="text-xs bg-white/10 text-white/70 px-3 py-1.5 rounded-full hover:bg-white/15">📄 Essay outline</button>
-        <button onclick="convertThought('distil')" class="text-xs bg-white/10 text-white/70 px-3 py-1.5 rounded-full hover:bg-white/15">🎯 Distil to 1 sentence</button>
-        <button onclick="convertThought('questions')" class="text-xs bg-white/10 text-white/70 px-3 py-1.5 rounded-full hover:bg-white/15">❓ Go deeper</button>
-      </div>`:''}
-    </div>`;
-  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+  const outcome={
+    deepen:'Push thinking with one sharp Socratic question. Name what they actually wrote. End with one concrete next thought.',
+    write:'Coach writing craft: strongest sentence, one structural improvement, one word swap for precision.',
+    distil:'Strip to the irreducible core. What is the single truest sentence? Then ask: is that really what you mean?',
+    college:'Frame as evidence of intellectual curiosity for Oxbridge/Ivy admissions. What does this reveal? What to develop?',
+    speak:'Coach spoken clarity: vague phrasing, filler thinking, how to open this idea in a talk.',
+    create:'Convert to a concrete project: name it, state the problem it solves, first three steps to build it.'
+  };
+  const modeCtx={quill:'written entry',tide:'spoken thought (transcribed)',chart:'visual diagram (described in caption)',gust:'rapid-fire thought capture'};
+  return `You are Wind — Vela's AI thinking coach. ${age[cfg.age]||age['14-16']}
+Apply the ${cfg.fw} method to this ${modeCtx[mode]||'entry'}.
+Your job: ${outcome[cfg.outcome]||outcome.deepen}
+${cfg.extra?'Additional: '+cfg.extra:''}
+Under 160 words. Be specific — name what they actually wrote.`;
 }
 
-// ═══════════════════════════════════════
-// WIND (AI)
-// ═══════════════════════════════════════
-function getApiKey(){
-  return cfg.guardianApiKey||cfg.learnerApiKey||'';
-}
-
-function buildSystemPrompt(mode){
-  const ageMap={
-    '7-10':'You speak to a child aged 7–10. Use simple warm words. Be very encouraging.',
-    '11-13':'You coach a young thinker aged 11–13. Be encouraging and curious. Introduce one new idea per response.',
-    '14-16':'You are an elite thinking coach for a 14–16 year old. Be direct, precise, treat them as a future scholar.',
-    '17-18':'You coach a 17–18 year old preparing for elite universities. Be rigorous and specific.'
-  };
-  const outcomeMap={
-    quill:'Push their thinking with one sharp Socratic question. Name what they actually wrote. End with one concrete next step.',
-    tide:'Coach their spoken clarity. Identify vague phrasing. Suggest how to open this idea in a talk.',
-    chart:'Read their caption as a visual idea. Ask what the drawing reveals that words could not. Suggest one thing to label or add.',
-    gust:'Synthesise their rapid answers into one connected insight they did not see. Then ask the question that connects them all.'
-  };
-  return `You are Wind — Vela's AI thinking coach. ${ageMap[cfg.age]||ageMap['14-16']}
-Apply the ${cfg.framework} method.
-${outcomeMap[mode]||outcomeMap['quill']}
-${cfg.instructorWind?'Additional instructor instructions: '+cfg.instructorWind:''}
-Keep under 180 words. Be specific — name what they actually wrote, not generic praise.`;
-}
-
-let lastWindEntry='';
-async function callWind(entryId, content, mode){
-  const key=getApiKey();
-  if(!key){
-    showResponse('Wind needs an API key. Add yours in ⚙ Settings, or ask your guardian to add theirs.','error');
-    return;
-  }
-  lastWindEntry=content;
-  showResponse('Wind is reading your entry...','loading');
+async function callWind(entryId,content,mode){
+  showWindBox('Wind is reading your entry...','loading',entryId);
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,system:buildSystemPrompt(mode),messages:[{role:'user',content:`My ${mode} entry: "${content}"`}]})
+      headers:{'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,system:buildPrompt(mode),messages:[{role:'user',content:`My ${mode} entry: "${content}"`}]})
     });
     if(!res.ok){
-      const e=await res.json().catch(()=>({}));
-      if(res.status===401) showResponse('API key issue — check in ⚙ Settings.','error');
-      else if(res.status===400) showResponse('API key needs billing set up at console.anthropic.com → Add funds.','error');
-      else showResponse('Wind hit an error ('+res.status+'). Check your API key.','error');
-      // update entry status
-      const entry=entries.find(e=>e.id===entryId);
-      if(entry) entry.status='pending'; save(); return;
+      const err=await res.json().catch(()=>({}));
+      if(res.status===401)showWindBox('API key issue — check ⚙ Wind settings.','error',entryId);
+      else if(res.status===400)showWindBox('Add billing at console.anthropic.com → Add funds, then try again.','error',entryId);
+      else showWindBox('Wind hit an error ('+res.status+'). Check your API key.','error',entryId);
+      return;
     }
     const data=await res.json();
     const text=data.content?.[0]?.text||'Wind is thinking...';
     const entry=entries.find(e=>e.id===entryId);
-    if(entry){entry.windResponse=text;entry.status='wind-done';} save();
-    gainXP(mode); renderSkillBars();
-    showResponse(text,'wind');
-  }catch(e){
-    showResponse('Wind could not connect. Check your internet and API key.','error');
+    if(entry){entry.windResponse=text;}
+    save();gainXP(mode);renderSkillBars();
+    showWindBox(text,'wind',entryId);
+  }catch(e){showWindBox('Wind could not connect. Check your internet and API key.','error',entryId);}
+}
+
+function showWindBox(text,type,entryId){
+  const area=document.getElementById('wind-response-area');
+  if(type==='wind'){
+    area.innerHTML=`<div class="wind-box">
+      <div class="wind-header"><div class="wind-pulse"></div><div class="wind-label">Wind · ${cfg.fw}</div></div>
+      <div class="wind-text">${text}</div>
+      <div class="wind-actions">
+        <button class="wind-act-btn" onclick="convertWind('essay')">📄 Essay outline</button>
+        <button class="wind-act-btn" onclick="convertWind('distil')">🎯 Distil to 1 sentence</button>
+        <button class="wind-act-btn" onclick="convertWind('questions')">❓ Go deeper</button>
+        <button class="wind-act-btn" onclick="shareToCircle(${entryId})">🤝 Share to circle</button>
+      </div>
+    </div>`;
+  } else if(type==='loading'){
+    area.innerHTML=`<div class="wind-box"><div class="wind-header"><div class="wind-pulse"></div><div class="wind-label">Wind is reading...</div></div><div class="wind-text" style="opacity:.5">${text}</div></div>`;
+  } else {
+    area.innerHTML=`<div style="background:#FEF2F2;border:0.5px solid #FECACA;border-radius:12px;padding:14px;font-size:13px;color:#B91C1C;line-height:1.6">${text}</div>`;
   }
+  area.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
-async function convertThought(type){
-  const key=getApiKey(); if(!key||!lastWindEntry) return;
-  const prompts={
-    essay:`Turn this into an essay outline: thesis, 3 arguments, counterargument, conclusion. Entry: "${lastWindEntry}"`,
-    distil:`Distil this to ONE sentence — the truest version. Then explain what you cut and why. Entry: "${lastWindEntry}"`,
-    questions:`Give 5 increasingly deep questions to push thinking further. Start simple, end profound. Entry: "${lastWindEntry}"`
-  };
-  showResponse('Wind is working...','loading');
+async function convertWind(type){
+  if(!cfg.apiKey||!lastEntry)return;
+  const p={essay:`Turn this into an essay outline: thesis, 3 arguments, counterargument, conclusion. Entry: "${lastEntry}"`,distil:`Distil this to ONE perfect sentence — the truest version of the idea. Entry: "${lastEntry}"`,questions:`Give 5 increasingly deep questions to push thinking further. Start simple, end profound. Entry: "${lastEntry}"`};
+  showWindBox('Wind is converting...','loading',0);
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:500,messages:[{role:'user',content:prompts[type]}]})
-    });
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:500,messages:[{role:'user',content:p[type]}]})});
     const data=await res.json();
-    showResponse(data.content?.[0]?.text||'Done.','wind');
-  }catch(e){showResponse('Could not connect.','error');}
+    showWindBox(data.content?.[0]?.text||'Done.','wind',0);
+  }catch(e){showWindBox('Could not connect.','error',0);}
 }
 
-// ═══════════════════════════════════════
-// GUARDIAN — REVIEW FLOW
-// ═══════════════════════════════════════
-function renderGuardianPending(){
-  const container=document.getElementById('guardian-pending');
-  if(!container) return;
-  const pending=entries.filter(e=>e.status==='pending');
-  if(!pending.length){container.innerHTML='<p class="text-sm text-gray-400 py-4 text-center">No entries waiting. ✓</p>';return;}
-  container.innerHTML=pending.map(e=>`
-    <div class="review-card bg-white border border-black/6 rounded-xl p-4 mb-3 fade-in">
-      <div class="flex items-center justify-between mb-2">
-        <div class="flex items-center gap-2">
-          <span class="text-lg">${{quill:'✍️',tide:'🎙',chart:'🖌',gust:'⚡'}[e.mode]||'📝'}</span>
-          <span class="text-xs font-semibold text-sail capitalize">${e.mode}</span>
-          <span class="text-xs text-gray-400">${e.time}</span>
-        </div>
-        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">Awaiting review</span>
-      </div>
-      <p class="text-sm text-gray-700 font-lora leading-snug mb-3">${e.content.slice(0,200)}${e.content.length>200?'...':''}</p>
-      <div class="flex gap-2 flex-wrap">
-        <button onclick="openReview(${e.id})" class="text-xs bg-ocean text-white px-3 py-1.5 rounded-full hover:opacity-80">Review & respond</button>
-        <button onclick="approveWindDirect(${e.id})" class="text-xs border border-sail text-sail px-3 py-1.5 rounded-full hover:bg-sail/5">Send to Wind →</button>
-      </div>
-    </div>`).join('');
-}
-
-function renderGuardianReviewed(){
-  const container=document.getElementById('guardian-reviewed');
-  if(!container) return;
-  const reviewed=entries.filter(e=>e.status!=='pending');
-  if(!reviewed.length){container.innerHTML='<p class="text-sm text-gray-400 py-2 text-center">None yet.</p>';return;}
-  container.innerHTML=reviewed.slice(0,10).map(e=>`
-    <div class="bg-white border border-black/6 rounded-xl p-3 mb-2">
-      <div class="flex items-center justify-between mb-1">
-        <span class="text-xs font-medium text-gray-500 capitalize">${e.mode} · ${e.time}</span>
-        <span class="text-xs px-2 py-0.5 rounded-full font-medium ${e.status==='wind-done'?'bg-blue-50 text-blue-600':'bg-green-50 text-green-600'}">${e.status==='wind-done'?'Wind responded':'Guardian responded'}</span>
-      </div>
-      <p class="text-xs text-gray-500 font-lora">${e.content.slice(0,80)}...</p>
-    </div>`).join('');
-}
-
-function openReview(id){
-  reviewingId=id;
+// ════════════ SHARE ════════════
+function shareToCircle(id){
   const entry=entries.find(e=>e.id===id);
-  if(!entry) return;
-  const content=document.getElementById('review-entry-content');
-  content.innerHTML=`
-    <div class="mb-4">
-      <div class="flex items-center gap-2 mb-2">
-        <span class="text-lg">${{quill:'✍️',tide:'🎙',chart:'🖌',gust:'⚡'}[entry.mode]||'📝'}</span>
-        <span class="text-xs font-semibold text-sail capitalize">${entry.mode} entry</span>
-        <span class="text-xs text-gray-400">${entry.time}</span>
-      </div>
-      <div class="bg-gray-50 rounded-xl p-4 font-lora text-sm text-gray-800 leading-relaxed">${entry.content}</div>
+  if(entry){entry.shared=true;save();}
+  showToast('Shared to your circle ✓');
+  renderShared();
+}
+function renderShared(){
+  const c=document.getElementById('shared-entries-list');if(!c)return;
+  const shared=entries.filter(e=>e.shared);
+  if(!shared.length){c.innerHTML='<div style="text-align:center;padding:2rem 0;font-size:13px;color:#D1D5DB">No shared thoughts yet.</div>';return;}
+  c.innerHTML=shared.map(e=>`<div class="brain-entry"><div class="be-meta"><span class="be-mode">${{quill:'✍️ Quill',tide:'🎙 Tide',chart:'🖌 Chart',gust:'⚡ Gust'}[e.mode]}</span><span class="be-time">${e.time}</span></div><div class="be-content">${e.content.slice(0,120)}${e.content.length>120?'...':''}</div></div>`).join('');
+}
+
+// ════════════ JOURNEY ════════════
+function setJourney(name,hook,icon,cat){
+  cfg.activeJourney={name,hook,icon,cat,startDate:new Date().toLocaleDateString(),entries:0};
+  save();renderActiveJourney();
+  const compass=`${icon} You're on the ${name}. Today's question: What did you do, think, or discover that moved your ${name.toLowerCase()} forward?`;
+  document.getElementById('compass-text').textContent=compass;
+  document.getElementById('journey-tag-label').textContent='· '+name;
+  showToast(icon+' '+name+' activated');
+  showTab('log');
+}
+function renderActiveJourney(){
+  const c=document.getElementById('active-journey-display');if(!c)return;
+  if(!cfg.activeJourney){c.innerHTML='';return;}
+  const j=cfg.activeJourney;
+  const tagged=entries.filter(e=>e.journey===j.name).length;
+  c.innerHTML=`<div class="active-journey-card">
+    <div class="aj-label">Active journey</div>
+    <div class="aj-name">${j.icon} ${j.name}</div>
+    <div class="aj-phase">${j.hook}</div>
+    <div class="aj-bar-bg"><div class="aj-bar-fill" style="width:${Math.min(tagged*10,100)}%"></div></div>
+    <div class="aj-stats">
+      <div class="aj-stat"><span>${tagged}</span>entries tagged</div>
+      <div class="aj-stat"><span>${j.startDate}</span>started</div>
+      <button onclick="cfg.activeJourney=null;save();renderActiveJourney();document.getElementById('journey-tag-label').textContent=''" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);border:none;border-radius:8px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;margin-left:auto">Change journey</button>
     </div>
-    <div class="mb-4">
-      <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-2">Your response (personal, from you)</label>
-      <textarea id="guardian-reply" rows="4" placeholder="Write your personal response, feedback, or guidance to your learner..." class="w-full text-sm border border-black/10 rounded-xl p-3 outline-none resize-none bg-gray-50 font-lora"></textarea>
-    </div>
-    <div class="flex gap-2 flex-col">
-      <button onclick="submitGuardianReply()" class="w-full bg-green-600 text-white text-sm font-semibold py-3 rounded-xl hover:opacity-85">Send my personal response ✓</button>
-      <button onclick="approveWindDirect(${id})" class="w-full border border-sail text-sail text-sm font-semibold py-3 rounded-xl hover:bg-sail/5">Pass to Wind (AI) instead →</button>
-      <button onclick="sendBothGuardianAndWind()" class="w-full border border-black/10 text-gray-600 text-sm font-semibold py-3 rounded-xl hover:bg-gray-50">Send my response AND Wind →</button>
-    </div>`;
-  showPanel('review-entry');
+  </div>`;
+}
+function setCompassFromCircle(q){
+  cfg.compass=q;save();
+  document.getElementById('compass-text').textContent=q;
+  showTab('log');showToast('Compass updated ✓');
 }
 
-function submitGuardianReply(){
-  const reply=document.getElementById('guardian-reply')?.value||'';
-  if(!reply.trim()){alert('Please write a response first.');return;}
-  const entry=entries.find(e=>e.id===reviewingId);
-  if(entry){entry.guardianResponse=reply;entry.status='reviewed';save();}
-  closePanel('review-entry');
-  renderGuardianPending();renderGuardianReviewed();
-}
-
-async function approveWindDirect(id){
-  const entry=entries.find(e=>e.id===id);
-  if(!entry) return;
-  closePanel('review-entry');
-  entry.status='wind-pending'; save();
-  const key=cfg.guardianApiKey||cfg.learnerApiKey||'';
-  if(!key){alert('Add your Claude API key in Guardian settings to use Wind.');renderGuardianPending();return;}
-  // call wind on behalf of learner
-  try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,system:buildSystemPrompt(entry.mode),messages:[{role:'user',content:`Learner's ${entry.mode} entry: "${entry.content}"`}]})
-    });
-    const data=await res.json();
-    entry.windResponse=data.content?.[0]?.text||'Wind responded.';
-    entry.status='wind-done'; save();
-  }catch(e){entry.status='pending';save();}
-  renderGuardianPending();renderGuardianReviewed();
-}
-
-async function sendBothGuardianAndWind(){
-  const reply=document.getElementById('guardian-reply')?.value||'';
-  const entry=entries.find(e=>e.id===reviewingId);
-  if(entry&&reply.trim()) entry.guardianResponse=reply;
-  closePanel('review-entry');
-  await approveWindDirect(reviewingId);
-}
-
-// ═══════════════════════════════════════
-// INSTRUCTOR
-// ═══════════════════════════════════════
-function setCompass(){
-  const val=document.getElementById('instructor-compass')?.value||'';
-  if(!val.trim()) return;
-  cfg.compass=val; save();
-  document.getElementById('compass-display').textContent=val;
-  alert('Compass updated for all learners ✓');
-}
-
-function renderGustEditor(){
-  const container=document.getElementById('gust-editor');
-  if(!container) return;
-  container.innerHTML=cfg.gustQuestions.map((q,i)=>`
-    <div class="flex gap-2 items-center">
-      <input type="text" value="${q}" class="flex-1 text-sm border border-black/10 rounded-lg px-3 py-2 outline-none bg-gray-50" id="gust-q-${i}">
-      <button onclick="removeGustQ(${i})" class="text-xs text-red-400 hover:text-red-600 px-2">×</button>
-    </div>`).join('');
-}
-
-function addGustQ(){
-  cfg.gustQuestions.push('New question...');
-  renderGustEditor();
-}
-
-function removeGustQ(i){
-  cfg.gustQuestions.splice(i,1);
-  renderGustEditor();
-}
-
-function saveGustPack(){
-  const inputs=document.querySelectorAll('[id^="gust-q-"]');
-  cfg.gustQuestions=Array.from(inputs).map(i=>i.value).filter(Boolean);
-  save(); renderGustQuestions();
-  alert('Gust questions updated ✓');
-}
-
-function selFramework(el, fw){
-  document.querySelectorAll('.framework-pill').forEach(p=>p.classList.remove('active'));
-  el.classList.add('active');
-  cfg.framework=fw;
-}
-
-function saveInstructorSettings(){
-  cfg.instructorWind=document.getElementById('instructor-wind')?.value||'';
-  save(); alert('Framework settings saved ✓');
-}
-
-function renderInstructorEntries(){
-  const container=document.getElementById('instructor-entries');
-  if(!container) return;
-  if(!entries.length){container.innerHTML='<p class="text-sm text-gray-400 text-center py-4">No entries yet.</p>';return;}
-  container.innerHTML=entries.slice(0,20).map(e=>`
-    <div class="border border-black/6 rounded-xl p-3 mb-2">
-      <div class="flex justify-between items-center mb-1">
-        <span class="text-xs font-medium text-sail capitalize">${e.mode}</span>
-        <span class="text-xs text-gray-400">${e.time}</span>
-      </div>
-      <p class="text-xs text-gray-600 font-lora leading-snug">${e.content.slice(0,100)}${e.content.length>100?'...':''}</p>
-      <div class="text-xs text-gray-400 mt-1">Status: ${e.status} ${e.guardianResponse?'· Guardian replied':''}${e.windResponse?'· Wind responded':''}</div>
-    </div>`).join('');
-}
-
-// ═══════════════════════════════════════
-// EXPERT
-// ═══════════════════════════════════════
-function renderExpertEntries(){
-  const container=document.getElementById('expert-entries');
-  if(!container) return;
-  const relevant = currentExpertRole==='speaker'
-    ? entries.filter(e=>e.mode==='tide')
-    : entries.filter(e=>e.mode==='quill'||e.mode==='gust');
-  if(!relevant.length){container.innerHTML='<p class="text-sm text-gray-400 text-center py-6">No relevant entries yet.</p>';return;}
-  container.innerHTML=relevant.slice(0,15).map(e=>`
-    <div class="bg-white border border-black/6 rounded-xl p-4 mb-3">
-      <div class="flex items-center gap-2 mb-2">
-        <span class="text-xs font-semibold text-sail capitalize">${e.mode}</span>
-        <span class="text-xs text-gray-400">${e.time}</span>
-      </div>
-      <p class="text-sm text-gray-700 font-lora leading-snug mb-3">${e.content.slice(0,150)}...</p>
-      <div class="mb-2"><textarea placeholder="Your expert feedback..." class="w-full text-sm border border-black/10 rounded-lg p-2 outline-none resize-none bg-gray-50 min-h-16" id="expert-reply-${e.id}"></textarea></div>
-      <button onclick="submitExpertFeedback(${e.id})" class="text-xs bg-ocean text-white px-3 py-1.5 rounded-full hover:opacity-80">Send feedback</button>
-      ${e.guardianResponse?`<div class="mt-2 text-xs text-green-600 bg-green-50 rounded-lg p-2">Expert: ${e.guardianResponse.slice(0,80)}...</div>`:''}
-    </div>`).join('');
-}
-
-function submitExpertFeedback(id){
-  const reply=document.getElementById('expert-reply-'+id)?.value||'';
-  if(!reply.trim()) return;
-  const entry=entries.find(e=>e.id===id);
-  if(entry){entry.guardianResponse=(entry.guardianResponse?entry.guardianResponse+'\n':'')+`[${currentExpertRole==='speaker'?'Speaking':'Writing'} Expert]: ${reply}`;entry.status='reviewed';save();}
-  renderExpertEntries();
-}
-
-function addPackPrompt(){
-  const container=document.getElementById('pack-prompts');
-  const div=document.createElement('div');
-  div.innerHTML=`<input type="text" placeholder="Prompt..." class="w-full text-sm border border-black/10 rounded-lg px-3 py-2 outline-none bg-gray-50">`;
-  container.appendChild(div);
-}
-
-function publishPack(){
-  const name=document.getElementById('pack-name')?.value||'';
-  const prompts=Array.from(document.querySelectorAll('#pack-prompts input')).map(i=>i.value).filter(Boolean);
-  if(!name||!prompts.length){alert('Add a pack name and at least one prompt.');return;}
-  // add to gust questions
-  cfg.gustQuestions=[...cfg.gustQuestions,...prompts];
-  save(); renderGustQuestions();
-  alert(`Pack "${name}" published with ${prompts.length} prompts ✓`);
-  document.getElementById('pack-name').value='';
-  document.getElementById('pack-prompts').innerHTML='';
-}
-
-// ═══════════════════════════════════════
-// SECOND BRAIN
-// ═══════════════════════════════════════
-function renderBrainSkillSummary(){
-  const container=document.getElementById('brain-skill-summary');
-  if(!container) return;
-  container.innerHTML=SKILLS.map(s=>{
-    const pct=Math.min((xp[s.id]/300)*100,100);
-    return `<div class="text-center">
-      <div class="text-xs font-medium mb-1" style="color:${s.color}">${s.label.split(' ')[0]}</div>
-      <div class="h-1 bg-gray-100 rounded-full"><div class="h-1 rounded-full" style="width:${pct}%;background:${s.color}"></div></div>
-      <div class="text-xs text-gray-400 mt-1">${xp[s.id]} XP</div>
-    </div>`;}).join('');
-}
-
-function renderBrainEntries(){
-  const container=document.getElementById('brain-entries-list');
-  if(!container) return;
+// ════════════ BRAIN ════════════
+function renderBrain(){
+  const c=document.getElementById('brain-list');if(!c)return;
   let filtered=entries;
-  if(brainFilter.mode!=='all') filtered=filtered.filter(e=>e.mode===brainFilter.mode);
-  if(brainFilter.query) filtered=filtered.filter(e=>e.content.toLowerCase().includes(brainFilter.query.toLowerCase()));
-  if(!filtered.length){container.innerHTML='<p class="text-sm text-gray-400 text-center py-8">No entries match.</p>';return;}
-  container.innerHTML=filtered.map(e=>`
-    <div class="journal-entry border border-black/6 rounded-xl p-3 mb-2 bg-white cursor-pointer" onclick="expandEntry(${e.id})">
-      <div class="flex items-center justify-between mb-1.5">
-        <div class="flex items-center gap-2">
-          <span>${{quill:'✍️',tide:'🎙',chart:'🖌',gust:'⚡'}[e.mode]||'📝'}</span>
-          <span class="text-xs font-medium text-sail capitalize">${e.mode}</span>
-        </div>
-        <div class="flex items-center gap-2">
-          ${e.guardianResponse?'<span class="text-xs text-green-600">🛡 responded</span>':''}
-          ${e.windResponse?'<span class="text-xs text-blue-500">🌬 Wind</span>':''}
-          <span class="text-xs text-gray-400">${e.time}</span>
-        </div>
-      </div>
-      <p class="text-sm text-gray-700 font-lora leading-snug">${e.content.slice(0,120)}${e.content.length>120?'...':''}</p>
-      ${e.guardianResponse?`<div class="mt-2 text-xs text-green-700 bg-green-50 rounded-lg px-3 py-2 leading-snug">${e.guardianResponse.slice(0,100)}...</div>`:''}
-      ${e.windResponse?`<div class="mt-2 text-xs text-blue-700 bg-blue-50 rounded-lg px-3 py-2 leading-snug font-lora">${e.windResponse.slice(0,100)}...</div>`:''}
-    </div>`).join('');
+  if(brainFilter.mode!=='all')filtered=filtered.filter(e=>e.mode===brainFilter.mode);
+  if(brainFilter.q)filtered=filtered.filter(e=>e.content.toLowerCase().includes(brainFilter.q.toLowerCase()));
+  if(!filtered.length){c.innerHTML='<div style="text-align:center;padding:3rem 0;font-size:13px;color:#D1D5DB">No entries yet. Open your Log and start thinking. ⛵</div>';return;}
+  const icons={quill:'✍️ Quill',tide:'🎙 Tide',chart:'🖌 Chart',gust:'⚡ Gust'};
+  c.innerHTML=filtered.map(e=>`<div class="brain-entry">
+    <div class="be-meta"><span class="be-mode">${icons[e.mode]||e.mode}</span><span class="be-time">${e.time}</span></div>
+    <div class="be-content">${e.content.slice(0,150)}${e.content.length>150?'...':''}</div>
+    <div class="be-responses">
+      ${e.windResponse?'<span class="be-badge wind">🌬 Wind responded</span>':''}
+      ${e.journey?`<span class="be-badge journey">🗺 ${e.journey}</span>`:''}
+      ${e.shared?'<span class="be-badge guardian">🤝 Shared</span>':''}
+    </div>
+  </div>`).join('');
+}
+function filterBrain(q){brainFilter.q=q;renderBrain();}
+function setBrainFilter(m,el){
+  brainFilter.mode=m;
+  document.querySelectorAll('.brain-filter').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');renderBrain();
 }
 
-function expandEntry(id){
-  const e=entries.find(en=>en.id===id);
-  if(!e) return;
-  const content=document.getElementById('review-entry-content');
-  content.innerHTML=`
-    <div class="mb-4">
-      <div class="flex items-center gap-2 mb-3">
-        <span class="text-lg">${{quill:'✍️',tide:'🎙',chart:'🖌',gust:'⚡'}[e.mode]}</span>
-        <span class="text-xs text-gray-400">${e.time}</span>
-      </div>
-      <div class="bg-gray-50 rounded-xl p-4 font-lora text-sm text-gray-800 leading-relaxed mb-3">${e.content}</div>
-      ${e.guardianResponse?`<div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-3"><div class="text-xs font-semibold text-green-600 mb-1">🛡 ${cfg.guardianName||'Guardian'} responded:</div><div class="text-sm text-gray-700 font-lora leading-relaxed">${e.guardianResponse}</div></div>`:''}
-      ${e.windResponse?`<div class="bg-ocean rounded-xl p-4"><div class="text-xs font-semibold text-sail mb-1">🌬 Wind · ${cfg.framework}</div><div class="text-sm text-white/85 font-lora leading-relaxed">${e.windResponse}</div></div>`:''}
-    </div>`;
-  showPanel('review-entry');
-}
-
-function filterBrain(query){brainFilter.query=query;renderBrainEntries();}
-function filterBrainMode(mode){
-  brainFilter.mode=mode;
-  document.querySelectorAll('.brain-filter').forEach(b=>{
-    b.className='brain-filter text-xs px-3 py-1 rounded-full border border-black/10 text-gray-500 whitespace-nowrap';
-  });
-  event.target.className='brain-filter text-xs px-3 py-1 rounded-full bg-ocean text-white whitespace-nowrap';
-  renderBrainEntries();
-}
-
-// ═══════════════════════════════════════
-// SKILL BARS
-// ═══════════════════════════════════════
+// ════════════ SKILLS ════════════
 function renderSkillBars(){
-  const container=document.getElementById('skill-bars-learner');
-  if(!container) return;
-  container.innerHTML=SKILLS.map(s=>{
+  const c=document.getElementById('skill-bars');if(!c)return;
+  c.innerHTML=SKILLS.map(s=>{
     const pct=Math.min((xp[s.id]/300)*100,100);
-    return `<div>
-      <div class="flex justify-between text-xs mb-1">
-        <span style="color:${s.color}90">${s.label}</span>
-        <span class="text-white/30">${xp[s.id]} XP</span>
-      </div>
-      <div class="h-1 bg-white/10 rounded-full">
-        <div class="h-1 rounded-full skill-bar" style="width:${pct}%;background:${s.color}"></div>
-      </div>
+    return `<div class="skill-row">
+      <div class="skill-top"><span style="color:${s.color}80;font-size:10px">${s.label}</span><span style="font-size:10px;color:rgba(255,255,255,.25)">${xp[s.id]} XP</span></div>
+      <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:${pct}%;background:${s.color}"></div></div>
     </div>`;}).join('');
 }
-
 function gainXP(mode){
   const map={quill:{writer:15,capturer:5},tide:{speaker:15,capturer:5,articulator:8},chart:{artist:15,capturer:5},gust:{distiller:12,capturer:5}};
-  const gains=map[mode]||{capturer:5};
-  Object.entries(gains).forEach(([skill,pts])=>{xp[skill]=Math.min((xp[skill]||0)+pts,999);});
-  save();updateStreakLine();renderSkillBars();renderBrainSkillSummary();
+  const g=map[mode]||{capturer:5};
+  Object.entries(g).forEach(([s,p])=>{xp[s]=Math.min((xp[s]||0)+p,999);});
+  save();renderSkillBars();
 }
-
-function updateStreakLine(){
-  const el=document.getElementById('learner-streak');
-  if(!el) return;
+function updateStreak(){
+  const el=document.getElementById('log-streak');if(!el)return;
   const n=entries.length;
   el.textContent=n===0?'Start your first entry today.':n===1?'1 entry in your Log':n+' entries · '+Math.min(n,7)+' day streak 🔥';
+  if(cfg.name){document.getElementById('log-greeting-name').textContent=cfg.name+' ⛵';}
 }
 
-// ═══════════════════════════════════════
-// SETTINGS SAVE
-// ═══════════════════════════════════════
-function saveLearnerSettings(){
-  cfg.learnerName=document.getElementById('learner-name')?.value||'';
-  cfg.learnerApiKey=document.getElementById('learner-api-key')?.value||'';
-  save();
-  if(cfg.learnerName) document.getElementById('learner-greeting').textContent=`Hey ${cfg.learnerName} ⛵`;
-  closePanel('learner-settings');
-}
-function saveGuardianSettings(){
-  cfg.guardianName=document.getElementById('guardian-name')?.value||'';
-  cfg.guardianApiKey=document.getElementById('guardian-api-key')?.value||'';
-  cfg.guardianDefault=document.getElementById('guardian-default')?.value||'review';
-  save(); alert('Guardian settings saved ✓');
-}
-function selAge(el,age){
-  document.querySelectorAll('.age-pill').forEach(p=>p.classList.remove('active'));
-  el.classList.add('active'); cfg.age=age;
-}
-
-// ═══════════════════════════════════════
-// VOICE
-// ═══════════════════════════════════════
+// ════════════ VOICE ════════════
 function toggleVoice(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){document.getElementById('voice-status').textContent='Voice needs Chrome or Safari.';return;}
-  if(!isRecording){
-    recognition=new SR();recognition.continuous=true;recognition.interimResults=true;recognition.lang='en-US';
+  const btn=document.getElementById('mic-btn');
+  const status=document.getElementById('mic-status');
+  if(!SR){status.textContent='Voice needs Chrome or Safari.';return;}
+  if(!isRec){
+    rec=new SR();rec.continuous=true;rec.interimResults=true;rec.lang='en-US';
     let final='';
-    recognition.onresult=e=>{
-      let interim='';
-      for(let i=e.resultIndex;i<e.results.length;i++){
-        if(e.results[i].isFinal)final+=e.results[i][0].transcript+' ';
-        else interim=e.results[i][0].transcript;
-      }
-      document.getElementById('tide-text').value=final+interim;
-      document.getElementById('voice-status').textContent=interim||'Listening...';
-    };
-    recognition.onerror=()=>stopVoice();
-    recognition.onend=()=>{if(isRecording)recognition.start();};
-    recognition.start();isRecording=true;
-    document.getElementById('voice-btn').textContent='⏹';
-    document.getElementById('voice-status').textContent='Recording... tap ⏹ to stop.';
+    rec.onresult=e=>{let inter='';for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)final+=e.results[i][0].transcript+' ';else inter=e.results[i][0].transcript;}document.getElementById('tide-text').value=final+inter;status.textContent=inter||'Listening...';};
+    rec.onerror=()=>stopVoice();
+    rec.onend=()=>{if(isRec)rec.start();};
+    rec.start();isRec=true;btn.classList.add('rec');btn.textContent='⏹';status.textContent='Recording... tap to stop.';
   }else stopVoice();
 }
-function stopVoice(){
-  if(recognition)recognition.stop();isRecording=false;
-  document.getElementById('voice-btn').textContent='🎙';
-  document.getElementById('voice-status').textContent='Done. Edit above, then submit.';
-}
+function stopVoice(){if(rec)rec.stop();isRec=false;const btn=document.getElementById('mic-btn');if(btn){btn.classList.remove('rec');btn.textContent='🎙';}const s=document.getElementById('mic-status');if(s)s.textContent='Done. Edit above, then submit.';}
 
-// ═══════════════════════════════════════
-// CANVAS
-// ═══════════════════════════════════════
+// ════════════ CANVAS ════════════
 function setupCanvas(){
-  const canvas=document.getElementById('draw-canvas');
-  if(!canvas)return;
-  canvas.width=canvas.parentElement.clientWidth||560;
-  const ctx=canvas.getContext('2d');
-  ctx.lineCap='round';ctx.lineJoin='round';
+  const canvas=document.getElementById('draw-canvas');if(!canvas)return;
+  canvas.width=canvas.parentElement.clientWidth||540;
+  const ctx=canvas.getContext('2d');ctx.lineCap='round';ctx.lineJoin='round';
   const pos=e=>{const r=canvas.getBoundingClientRect(),src=e.touches?e.touches[0]:e;return[(src.clientX-r.left)*(canvas.width/r.width),(src.clientY-r.top)*(canvas.height/r.height)];};
-  const start=e=>{e.preventDefault();isDrawing=true;[lastX,lastY]=pos(e);};
-  const draw=e=>{e.preventDefault();if(!isDrawing)return;const[x,y]=pos(e);ctx.strokeStyle=penColor;ctx.lineWidth=penSize;ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(x,y);ctx.stroke();[lastX,lastY]=[x,y];};
-  const stop=()=>isDrawing=false;
+  const start=e=>{e.preventDefault();drawing=true;[lx,ly]=pos(e);};
+  const draw=e=>{e.preventDefault();if(!drawing)return;const[x,y]=pos(e);ctx.strokeStyle=penColor;ctx.lineWidth=penSz;ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(x,y);ctx.stroke();[lx,ly]=[x,y];};
+  const stop=()=>{drawing=false;};
   canvas.removeEventListener('mousedown',canvas._s);canvas.removeEventListener('mousemove',canvas._d);canvas.removeEventListener('mouseup',canvas._e);
   canvas._s=start;canvas._d=draw;canvas._e=stop;
   canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',draw);canvas.addEventListener('mouseup',stop);
   canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',draw,{passive:false});canvas.addEventListener('touchend',stop);
 }
 function clearCanvas(){const c=document.getElementById('draw-canvas');if(c)c.getContext('2d').clearRect(0,0,c.width,c.height);}
-function setPen(color,el){penColor=color;document.querySelectorAll('#pen-dots>div').forEach(d=>{d.style.outline='none';d.style.outlineOffset='0';});el.style.outline='2px solid #0A1628';el.style.outlineOffset='2px';}
+function setPen(color,el){penColor=color;document.querySelectorAll('.pen-dot').forEach(d=>{d.style.outline='none';d.style.outlineOffset='0';});el.style.outline='2px solid var(--ocean)';el.style.outlineOffset='2px';}
+
+// ════════════ SETTINGS ════════════
+function selPill(el,group,val){
+  const container=el.closest('[id$="-pills"]');
+  if(container)container.querySelectorAll('.panel-pill').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  if(group==='age')cfg.age=val;
+  if(group==='fw')cfg.fw=val;
+  if(group==='outcome')cfg.outcome=val;
+}
+function saveSettings(){
+  cfg.name=document.getElementById('s-name')?.value||'';
+  cfg.apiKey=document.getElementById('s-apikey')?.value||'';
+  cfg.compass=document.getElementById('s-compass')?.value||'';
+  cfg.extra=document.getElementById('s-extra')?.value||'';
+  if(cfg.compass)document.getElementById('compass-text').textContent=cfg.compass;
+  if(cfg.name)document.getElementById('log-greeting-name').textContent=cfg.name+' ⛵';
+  save();closePanel();showToast('Settings saved ✓');
+}
+function showPanel(p){document.getElementById('settings-panel').classList.remove('hidden');}
+function closePanel(){document.getElementById('settings-panel').classList.add('hidden');}
+function closePanelIfOutside(e){if(e.target===document.getElementById('settings-panel'))closePanel();}
+
+// ════════════ UTILS ════════════
+let toastTimer=null;
+function showToast(msg){
+  const existing=document.querySelector('.toast');if(existing)existing.remove();
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  document.body.appendChild(t);if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.remove(),2500);
+}
+function joinWaitlist(){
+  const email=document.getElementById('waitlist-email')?.value||'';
+  const msg=document.getElementById('waitlist-msg');
+  if(!email||!email.includes('@')){if(msg){msg.textContent='Please enter a valid email.';msg.style.color='#EF4444';}return;}
+  if(msg){msg.textContent='⛵ You\'re in the fleet. See you soon.';msg.style.color='#63B3ED';}
+  document.getElementById('waitlist-email').value='';
+}
 </script>
 </body>
 </html>
